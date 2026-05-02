@@ -1,1 +1,116 @@
+/* ===========================================
+   Design Tokens — gegenereerd door transform-tokens.js
+   Niet handmatig bewerken. Bron: src/tokens/raw/variables.json
+   =========================================== */
 
+:root {
+
+  /* Color Schemes */
+  --color-scheme-1-background: #ffffff;
+  --color-scheme-1-border: #000000;
+  --color-scheme-1-text: #000000;
+  --color-scheme-1-foreground: #ffffff;
+  --color-scheme-1-accent: #000000;
+
+  /* Primitives */
+  --color-neutral-darkest: #000000;
+  --color-neutral-lighter: #cccccc;
+  --color-white: #ffffff;
+  --color-neutral-lightest: #eeeeee;
+  --color-neutral-light: #aaaaaa;
+  --color-neutral: #666666;
+  --color-neutral-dark: #444444;
+  --color-neutral-darker: #222222;
+  --opacity-transparent: rgba(255, 255, 255, 0);
+  --opacity-white-5: rgba(255, 255, 255, 0.05);
+  --opacity-white-10: rgba(255, 255, 255, 0.1);
+  --opacity-white-15: rgba(255, 255, 255, 0.15);
+  --opacity-white-20: rgba(255, 255, 255, 0.2);
+  --opacity-white-30: rgba(255, 255, 255, 0.3);
+  --opacity-white-40: rgba(255, 255, 255, 0.4);
+  --opacity-white-50: rgba(255, 255, 255, 0.5);
+  --opacity-white-60: rgba(255, 255, 255, 0.6);
+  --opacity-neutral-darkest-5: rgba(0, 0, 0, 0.05);
+  --opacity-neutral-darkest-10: rgba(0, 0, 0, 0.1);
+  --opacity-neutral-darkest-15: rgba(0, 0, 0, 0.15);
+  --opacity-neutral-darkest-20: rgba(0, 0, 0, 0.2);
+  --opacity-neutral-darkest-30: rgba(0, 0, 0, 0.3);
+  --opacity-neutral-darkest-40: rgba(0, 0, 0, 0.4);
+  --opacity-neutral-darkest-50: rgba(0, 0, 0, 0.5);
+  --opacity-neutral-darkest-60: rgba(0, 0, 0, 0.6);
+
+  /* UI Styles */
+  --stroke-border-width: 1px;
+  --stroke-divider-width: 1px;
+  --radius-small: 8px;
+  --radius-medium: 16px;
+  --radius-large: 24px;
+  --radius-extra-large: 32px;
+  --radius-rounded: 1000px;
+
+  /* Typography — Desktop (base) */
+  --text-sizes-heading-1: 56px;
+  --text-sizes-heading-2: 48px;
+  --text-sizes-heading-3: 40px;
+  --text-sizes-heading-4: 32px;
+  --text-sizes-heading-5: 24px;
+  --text-sizes-heading-6: 20px;
+  --text-sizes-text-large: 20px;
+  --text-sizes-text-medium: 18px;
+  --text-sizes-text-regular: 16px;
+  --text-sizes-text-small: 14px;
+  --text-sizes-text-tiny: 12px;
+
+  /* Spacing & Sizing — Desktop (base) */
+  --container-container-small: 768px;
+  --container-container-medium: 1024px;
+  --container-container-large: 1280px;
+  --max-width-max-width-xxsmall: 320px;
+  --max-width-max-width-medium: 560px;
+  --max-width-max-width-large: 768px;
+  --max-width-max-width-xsmall: 400px;
+  --max-width-max-width-small: 480px;
+  --max-width-max-width-xlarge: 1024px;
+  --max-width-max-width-xxlarge: 1280px;
+  --section-padding-padding-section-small: 48px;
+  --section-padding-padding-section-medium: 80px;
+  --section-padding-padding-section-large: 112px;
+  --page-padding-padding-global: 64px;
+  --section-padding-padding-section-tiny: 32px;
+}
+
+@media (max-width: 768px) {
+  :root {
+
+    /* Typography — Mobile */
+    --text-sizes-heading-1: 40px;
+    --text-sizes-heading-2: 36px;
+    --text-sizes-heading-3: 32px;
+    --text-sizes-heading-4: 24px;
+    --text-sizes-heading-5: 20px;
+    --text-sizes-heading-6: 18px;
+    --text-sizes-text-large: 18px;
+    --text-sizes-text-medium: 16px;
+    --text-sizes-text-regular: 16px;
+    --text-sizes-text-small: 14px;
+    --text-sizes-text-tiny: 12px;
+
+    /* Spacing & Sizing — Mobile */
+    --container-container-small: 768px;
+    --container-container-medium: 1024px;
+    --container-container-large: 1280px;
+    --max-width-max-width-xxsmall: 320px;
+    --max-width-max-width-medium: 560px;
+    --max-width-max-width-large: 768px;
+    --max-width-max-width-xsmall: 400px;
+    --max-width-max-width-small: 480px;
+    --max-width-max-width-xlarge: 1024px;
+    --max-width-max-width-xxlarge: 1280px;
+    --section-padding-padding-section-small: 32px;
+    --section-padding-padding-section-medium: 48px;
+    --section-padding-padding-section-large: 64px;
+    --page-padding-padding-global: 20px;
+    --section-padding-padding-section-tiny: 32px;
+
+  }
+}
