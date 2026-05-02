@@ -1,0 +1,33 @@
+name: Transform Design Tokens
+
+on:
+  push:
+    paths:
+      - 'src/tokens/raw/variables.json'
+
+jobs:
+  transform:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run token transform
+        run: node scripts/transform-tokens.js
+
+      - name: Commit gegenereerde tokens
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/tokens/output/tokens.css
+          git diff --cached --quiet || git commit -m "chore: update tokens.css via transform-tokens"
+          git push
