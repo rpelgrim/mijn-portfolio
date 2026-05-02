@@ -11,6 +11,7 @@
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
+    "tokens": "node scripts/transform-tokens.js"
   },
   "dependencies": {
     "react": "^19.2.5",
