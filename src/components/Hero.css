@@ -1,0 +1,83 @@
+.hero {
+  margin: 16px;
+  height: calc(100svh - 32px);
+}
+
+.hero__bg {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-extra-large);
+  background-color: var(--color-neutral-lighter);
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Reveal overlay */
+@keyframes col-reveal {
+  from { transform: scaleY(1); }
+  to   { transform: scaleY(0); }
+}
+
+.hero__reveal {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.hero__reveal-col {
+  flex: 1;
+  background-color: var(--color-background);
+  transform-origin: top;
+  animation: col-reveal 0.9s cubic-bezier(0.76, 0, 0.24, 1) var(--delay, 0s) both;
+}
+
+.hero__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.hero__tagline {
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #fff;
+  margin: 0;
+}
+
+.hero__name {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  line-height: 1;
+}
+
+.hero__word {
+  display: block;
+  white-space: nowrap;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 10vw; /* wordt overschreven door JS */
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+[data-theme="dark"] .hero__word {
+  color: #ffffff;
+}
+
+.hero__word--left,
+.hero__word--right {
+  text-align: center;
+}

@@ -1,0 +1,79 @@
+:root {
+  /* Fonts — beheerd via CLAUDE.md */
+  --font-heading: 'Arimo', system-ui, sans-serif;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+
+  /* Semantische kleuren */
+  --color-background: #FFFFFF;
+  --color-foreground: #FFFFFF;
+  --color-text: #000000;
+  --color-border: #000000;
+  --color-accent: #000000;
+
+  /* Primitieve kleuren */
+  --color-white: #FFFFFF;
+  --color-neutral-lightest: #EEEEEE;
+  --color-neutral-lighter: #CCCCCC;
+  --color-neutral-light: #AAAAAA;
+  --color-neutral: #666666;
+  --color-neutral-dark: #444444;
+  --color-neutral-darker: #222222;
+  --color-neutral-darkest: #000000;
+
+  /* Opaciteit */
+  --opacity-white-60: rgba(255, 255, 255, 0.6);
+  --opacity-white-80: rgba(255, 255, 255, 0.8);
+  --opacity-white-8: rgba(255, 255, 255, 0.08);
+  --opacity-neutral-darkest-8: rgba(0, 0, 0, 0.08);
+
+  /* Typografie — desktop */
+  --text-h1: 3.5rem;
+  --text-h2: 3rem;
+  --text-h3: 2.5rem;
+  --text-h4: 2rem;
+  --text-h5: 1.5rem;
+  --text-h6: 1.25rem;
+  --text-large: 1.25rem;
+  --text-medium: 1.125rem;
+  --text-regular: 1rem;
+  --text-small: 0.875rem;
+  --text-tiny: 0.75rem;
+
+  /* Spacing — desktop */
+  --page-padding: 64px;
+  --section-tiny: 32px;
+  --section-small: 48px;
+  --section-medium: 80px;
+  --section-large: 112px;
+  --container-small: 768px;
+  --container-medium: 1024px;
+  --container-large: 1280px;
+
+  /* Border radius */
+  --radius-small: 8px;
+  --radius-medium: 16px;
+  --radius-large: 24px;
+  --radius-extra-large: 32px;
+  --radius-rounded: 1000px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    /* Typografie — mobiel */
+    --text-h1: 2.5rem;
+    --text-h2: 2.25rem;
+    --text-h3: 2rem;
+    --text-h4: 1.5rem;
+    --text-h5: 1.25rem;
+    --text-h6: 1.125rem;
+    --text-large: 1.125rem;
+    --text-medium: 1rem;
+
+    /* Spacing — mobiel */
+    --page-padding: 20px;
+    --section-tiny: 32px;
+    --section-small: 32px;
+    --section-medium: 48px;
+    --section-large: 64px;
+  }
+}

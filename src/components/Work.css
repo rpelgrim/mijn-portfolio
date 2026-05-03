@@ -1,0 +1,114 @@
+/* Wrapper bepaalt de totale scrollhoogte; hoogte gezet via JS */
+.work-wrapper {
+  position: relative;
+}
+
+/* Sticky sectie vult altijd het scherm */
+.work {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: var(--section-medium) var(--page-padding);
+  gap: var(--section-small);
+}
+
+/* Header */
+.work__header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.work__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-h2);
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1;
+  margin: 0;
+}
+
+.work__description {
+  font-family: var(--font-sans);
+  font-size: var(--text-regular);
+  font-weight: 400;
+  color: var(--color-neutral);
+  margin: 0;
+}
+
+/* Scroll container — overflow hidden, JS stuurt de translate */
+.work__scroll {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+/* Track verschuift horizontaal via translateX */
+.work__track {
+  display: flex;
+  gap: 16px;
+  will-change: transform;
+  /* Rechts padding zorgt voor ademruimte bij het laatste project */
+  padding-right: var(--page-padding);
+}
+
+/* Kaart */
+.work__card {
+  flex-shrink: 0;
+  width: 560px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.work__card-image {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  background-color: var(--color-neutral-lightest);
+  border-radius: var(--radius-large);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.work__card-placeholder {
+  font-size: 48px;
+  font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 48;
+  color: var(--color-neutral-light);
+}
+
+.work__card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.work__card-category {
+  font-family: var(--font-sans);
+  font-size: var(--text-tiny);
+  font-weight: 400;
+  color: var(--color-neutral);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.work__card-title {
+  font-family: var(--font-heading);
+  font-size: var(--text-h5);
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* Mobiel — smallere kaarten */
+@media (max-width: 768px) {
+  .work__card {
+    width: 80vw;
+  }
+}
