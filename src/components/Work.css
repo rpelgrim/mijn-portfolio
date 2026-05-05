@@ -8,7 +8,6 @@
   position: sticky;
   top: 0;
   height: 100svh;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   padding: var(--section-medium) var(--page-padding);
@@ -43,7 +42,6 @@
 /* Scroll container — overflow hidden, JS stuurt de translate */
 .work__scroll {
   flex: 1;
-  overflow: hidden;
   display: flex;
   align-items: center;
 }

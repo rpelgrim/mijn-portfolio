@@ -38,46 +38,67 @@
   animation: col-reveal 0.9s cubic-bezier(0.76, 0, 0.24, 1) var(--delay, 0s) both;
 }
 
+/* Karakter animatie */
+@keyframes char-up {
+  from { transform: translateY(110%); }
+  to   { transform: translateY(0); }
+}
+
+/* Clip-wrapper: verbergt het karakter totdat het omhoog glijdt */
+.hero__char-clip {
+  display: inline-block;
+  vertical-align: top;
+  /* clip-path ipv overflow zodat stroke/descenders niet worden afgesneden */
+  clip-path: inset(0 0 -8px 0);
+}
+
+.hero__char {
+  display: inline-block;
+  animation: char-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 .hero__content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-}
-
-.hero__tagline {
-  font-family: var(--font-sans);
-  font-size: var(--text-small);
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: #fff;
-  margin: 0;
+  width: 100%;
 }
 
 .hero__name {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  /* 280px op 1440px desktop, schaalt vloeiend naar beneden */
+  font-size: clamp(3rem, 19.44vw, 17.5rem);
+  letter-spacing: 0.01em;
   line-height: 1;
+  mix-blend-mode: difference;
+  /* overflow-x: clip clipped de marquee horizontaal zonder de verticale as aan te raken */
+  overflow-x: clip;
+  overflow-y: visible;
+  width: 100%;
+  margin: 0;
+}
+
+/* Marquee track: twee kopieën naast elkaar, translateX via JS */
+.hero__marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.hero__marquee-copy {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 16px;
+  white-space: nowrap;
 }
 
 .hero__word {
-  display: block;
-  white-space: nowrap;
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 10vw; /* wordt overschreven door JS */
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
+  display: inline;
   color: #fff;
 }
 
-[data-theme="dark"] .hero__word {
-  color: #ffffff;
-}
-
-.hero__word--left,
-.hero__word--right {
-  text-align: center;
+.hero__word--outlined {
+  color: transparent;
+  -webkit-text-stroke: 1px #fff;
 }
