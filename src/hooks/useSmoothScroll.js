@@ -4,6 +4,9 @@ const EASE = 0.08
 
 export function useSmoothScroll() {
   useEffect(() => {
+    /* Sla over op touch-apparaten — native scroll werkt beter op iOS/Android */
+    if (window.matchMedia('(pointer: coarse)').matches) return
+
     let targetY = window.scrollY
     let currentY = window.scrollY
     let rafId
