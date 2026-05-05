@@ -68,8 +68,8 @@ function Work() {
   }, [])
 
   return (
-    <div className="work-wrapper" ref={wrapperRef}>
-      <section className="work" id="work" ref={sectionRef}>
+    <div className="work-wrapper" id="work" ref={wrapperRef}>
+      <section className="work" ref={sectionRef}>
         <div className="work__header">
           <h2 className="work__title">Work</h2>
           <p className="work__description">Een selectie van mijn recente projecten.</p>
