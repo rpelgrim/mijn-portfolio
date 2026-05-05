@@ -1,6 +1,10 @@
 .hero {
   margin: 16px;
   height: calc(100svh - 32px);
+  /* Vertelt iOS dat touch-events hier alleen verticaal mogen scrollen.
+     Zonder dit herkent iOS de brede marquee-track als horizontaal scrollbare
+     inhoud en onderschept het touch-events, waardoor verticaal scrollen blokkeert. */
+  touch-action: pan-y;
 }
 
 .hero__bg {
@@ -87,6 +91,7 @@
   display: flex;
   width: max-content;
   will-change: transform;
+  touch-action: pan-y;
 }
 
 .hero__marquee-copy {
