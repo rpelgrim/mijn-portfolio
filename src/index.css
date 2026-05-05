@@ -12,7 +12,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.3s ease, color 0.3s ease;
-  overflow-x: hidden;
+  /* clip ipv hidden: iOS Safari behandelt overflow-x: hidden op body als scroll
+     container, wat verticaal touch-scrollen op de hele pagina blokkeert */
+  overflow-x: clip;
 }
 
 #root {
