@@ -36,7 +36,12 @@ function Navbar() {
             key={label}
             href={href}
             className="navbar__item"
-            onClick={() => setOpen(false)}
+            onClick={(e) => {
+              e.preventDefault()
+              setOpen(false)
+              const target = document.querySelector(href)
+              if (target) target.scrollIntoView({ behavior: 'smooth' })
+            }}
           >
             <div className="navbar__item-icon">
               <span className="material-symbols-outlined">{icon}</span>
