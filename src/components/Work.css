@@ -1,6 +1,7 @@
 /* Wrapper bepaalt de totale scrollhoogte; hoogte gezet via JS */
 .work-wrapper {
   position: relative;
+  overflow-x: clip;
 }
 
 /* Sticky sectie vult altijd het scherm */
