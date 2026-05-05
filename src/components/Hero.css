@@ -11,7 +11,10 @@
   background-color: var(--color-neutral-lighter);
   background-size: cover;
   background-position: center;
-  overflow: hidden;
+  /* clip ipv hidden: knipt visueel hetzelfde maar maakt geen scroll container aan.
+     overflow: hidden liet iOS de brede marquee-track detecteren als horizontaal
+     scrollbare inhoud, wat verticaal touch-scrollen blokkeerde. */
+  overflow: clip;
   display: flex;
   align-items: center;
   justify-content: center;
