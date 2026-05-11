@@ -29,7 +29,7 @@ const STEPS = [
   },
 ]
 
-function ContactForm({ onClose }) {
+function ContactForm() {
   const [step, setStep] = useState(0)
   const [values, setValues] = useState({})
   const [submitted, setSubmitted] = useState(false)
@@ -39,22 +39,13 @@ function ContactForm({ onClose }) {
   const isLast = step === STEPS.length - 1
   const hasValue = !!(values[current?.field] || '').trim()
 
-  /* Focus het inputveld bij elke stap */
   useEffect(() => {
     inputRef.current?.focus()
   }, [step])
 
-  /* Sluit met Escape */
-  useEffect(() => {
-    const onKey = (e) => { if (e.key === 'Escape') onClose() }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [onClose])
-
   const handleNext = () => {
     if (!hasValue) return
     if (isLast) {
-      /* Open mailto met ingevulde gegevens */
       const subject = encodeURIComponent(`Contactverzoek van ${values.firstName} ${values.lastName}`)
       const body = encodeURIComponent(
         `Naam: ${values.firstName} ${values.lastName}\nE-mail: ${values.email}\n\n${values.message}`
@@ -70,78 +61,68 @@ function ContactForm({ onClose }) {
     if (e.key === 'Enter' && current.type !== 'textarea') handleNext()
   }
 
-  /* Vervangt {firstName} in de berichttekst */
-  const bubbleMessage = current?.message.replace('{firstName}', values.firstName || '')
+  const bubbleMessage = submitted
+    ? 'Bedankt voor je bericht! Ik neem zo snel mogelijk contact met je op.'
+    : current?.message.replace('{firstName}', values.firstName || '')
 
   return (
-    <div className="contact-overlay" onClick={onClose}>
-      <div className="contact-form" onClick={(e) => e.stopPropagation()}>
-
-        <button className="contact-form__close" onClick={onClose} aria-label="Sluiten">
-          <span className="material-symbols-outlined">close</span>
-        </button>
-
-        <div className="contact-form__top">
-          <img src={avatarImg} className="contact-form__avatar" alt="Rowdy Pelgrim" />
-          <div className="contact-form__bubble">
-            {submitted
-              ? 'Bedankt voor je bericht! Ik neem zo snel mogelijk contact met je op.'
-              : bubbleMessage}
-          </div>
-        </div>
-
-        {!submitted && (
-          <>
-            <div className="contact-form__input-wrap">
-              {current.type === 'textarea' ? (
-                <textarea
-                  ref={inputRef}
-                  className="contact-form__input"
-                  placeholder={current.label}
-                  value={values[current.field] || ''}
-                  onChange={(e) => setValues((v) => ({ ...v, [current.field]: e.target.value }))}
-                  rows={4}
-                />
-              ) : (
-                <input
-                  ref={inputRef}
-                  className="contact-form__input"
-                  type={current.type}
-                  placeholder={current.label}
-                  value={values[current.field] || ''}
-                  onChange={(e) => setValues((v) => ({ ...v, [current.field]: e.target.value }))}
-                  onKeyDown={handleKeyDown}
-                />
-              )}
-            </div>
-
-            <div className="contact-form__footer">
-              <div className="contact-form__dots">
-                {STEPS.map((_, i) => (
-                  <span
-                    key={i}
-                    className={[
-                      'contact-form__dot',
-                      i === step ? 'contact-form__dot--active' : '',
-                      i < step ? 'contact-form__dot--done' : '',
-                    ].join(' ')}
-                  />
-                ))}
-              </div>
-              <button
-                className="contact-form__next"
-                onClick={handleNext}
-                disabled={!hasValue}
-                aria-label={isLast ? 'Versturen' : 'Volgende'}
-              >
-                <span className="material-symbols-outlined">
-                  {isLast ? 'send' : 'arrow_forward'}
-                </span>
-              </button>
-            </div>
-          </>
-        )}
+    <div className="contact-form">
+      <div className="contact-form__top">
+        <img src={avatarImg} className="contact-form__avatar" alt="Rowdy Pelgrim" />
+        <div className="contact-form__bubble">{bubbleMessage}</div>
       </div>
+
+      {!submitted && (
+        <>
+          <div className="contact-form__input-wrap">
+            {current.type === 'textarea' ? (
+              <textarea
+                ref={inputRef}
+                className="contact-form__input"
+                placeholder={current.label}
+                value={values[current.field] || ''}
+                onChange={(e) => setValues((v) => ({ ...v, [current.field]: e.target.value }))}
+                rows={3}
+              />
+            ) : (
+              <input
+                ref={inputRef}
+                className="contact-form__input"
+                type={current.type}
+                placeholder={current.label}
+                value={values[current.field] || ''}
+                onChange={(e) => setValues((v) => ({ ...v, [current.field]: e.target.value }))}
+                onKeyDown={handleKeyDown}
+              />
+            )}
+          </div>
+
+          <div className="contact-form__footer">
+            <div className="contact-form__dots">
+              {STEPS.map((_, i) => (
+                <span
+                  key={i}
+                  className={[
+                    'contact-form__dot',
+                    i === step ? 'contact-form__dot--active' : '',
+                    i < step ? 'contact-form__dot--done' : '',
+                  ].join(' ')}
+                />
+              ))}
+            </div>
+            <button
+              className="contact-form__next"
+              onClick={handleNext}
+              disabled={!hasValue}
+              aria-label={isLast ? 'Versturen' : 'Volgende'}
+            >
+              <span className="material-symbols-outlined">
+                {isLast ? 'send' : 'arrow_forward'}
+              </span>
+            </button>
+          </div>
+        </>
+      )}
     </div>
   )
 }

@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import ContactForm from './ContactForm'
 import './Footer.css'
 
@@ -10,20 +9,14 @@ const socialLinks = [
 ]
 
 function Footer() {
-  const [formOpen, setFormOpen] = useState(false)
-
   return (
     <footer className="footer">
-      {formOpen && <ContactForm onClose={() => setFormOpen(false)} />}
       <div className="footer__inner">
         <div className="footer__top">
           <div className="footer__left">
             <span className="footer__label">Contact</span>
             <h2 className="footer__heading">Let's start<br />creating together</h2>
-            <button className="footer__cta" onClick={() => setFormOpen(true)}>
-              Let's talk
-              <span className="material-symbols-outlined">arrow_outward</span>
-            </button>
+            <ContactForm />
           </div>
 
           <div className="footer__right">
