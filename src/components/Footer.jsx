@@ -14,7 +14,7 @@ function Footer() {
       <div className="footer__inner">
         <div className="footer__top">
           <div className="footer__left">
-            <h2 className="footer__heading">Let's start<br />creating together</h2>
+            <h2 className="footer__heading">Laten we samen<br />iets moois maken</h2>
             <ContactForm />
           </div>
 
