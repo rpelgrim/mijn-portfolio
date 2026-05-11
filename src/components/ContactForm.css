@@ -103,8 +103,8 @@
   height: 44px;
   border-radius: 50%;
   background-color: transparent;
-  color: var(--footer-text-muted);
-  border: 1px solid var(--footer-border);
+  color: var(--footer-text-secondary);
+  border: 1px solid var(--footer-text-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -114,7 +114,7 @@
 
 .contact-form__back:hover {
   color: var(--footer-text);
-  border-color: var(--footer-text-secondary);
+  border-color: var(--footer-text);
 }
 
 .contact-form__back .material-symbols-outlined {
