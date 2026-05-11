@@ -110,16 +110,27 @@ function ContactForm() {
                 />
               ))}
             </div>
-            <button
-              className="contact-form__next"
-              onClick={handleNext}
-              disabled={!hasValue}
-              aria-label={isLast ? 'Versturen' : 'Volgende'}
-            >
-              <span className="material-symbols-outlined">
-                {isLast ? 'send' : 'arrow_forward'}
-              </span>
-            </button>
+            <div className="contact-form__actions">
+              {step > 0 && (
+                <button
+                  className="contact-form__back"
+                  onClick={() => setStep(s => s - 1)}
+                  aria-label="Vorige stap"
+                >
+                  <span className="material-symbols-outlined">arrow_back</span>
+                </button>
+              )}
+              <button
+                className="contact-form__next"
+                onClick={handleNext}
+                disabled={!hasValue}
+                aria-label={isLast ? 'Versturen' : 'Volgende'}
+              >
+                <span className="material-symbols-outlined">
+                  {isLast ? 'send' : 'arrow_forward'}
+                </span>
+              </button>
+            </div>
           </div>
         </>
       )}
