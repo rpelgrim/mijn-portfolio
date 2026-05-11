@@ -8,12 +8,11 @@
 - Minimalistisch, clean, editorial
 
 ## Fonts (CSS variabelen)
-- `--font-heading`: 'Arimo', system-ui, sans-serif — voor headings en buttons
+- `--font-heading`: 'Plus Jakarta Sans', system-ui, sans-serif — voor headings en buttons
 - `--font-sans`: 'Plus Jakarta Sans', system-ui, sans-serif — voor tagline en paragraafteksten
 
 Google Fonts import (in index.html):
 ```
-Arimo:ital,wght@0,400..700;1,400..700
 Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800
 ```
 

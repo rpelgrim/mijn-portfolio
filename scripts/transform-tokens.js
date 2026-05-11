@@ -80,7 +80,7 @@ const toRem = px => `${px / 16}rem`
 
 const css = `:root {
   /* Fonts — beheerd via CLAUDE.md */
-  --font-heading: 'Arimo', system-ui, sans-serif;
+  --font-heading: 'Plus Jakarta Sans', system-ui, sans-serif;
   --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
 
   /* Semantische kleuren */
