@@ -161,10 +161,11 @@
 @media (max-width: 768px) {
   .footer__top {
     flex-direction: column;
+    gap: 24px;
   }
 
   .footer__right {
     gap: 40px;
-    padding-top: 24px;
+    padding-top: 0;
   }
 }
