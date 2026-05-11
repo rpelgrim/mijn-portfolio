@@ -82,7 +82,6 @@
   letter-spacing: 0.01em;
   line-height: 1;
   padding-bottom: 0.15em;
-  mix-blend-mode: difference;
   /* overflow-x: clip clipped de marquee horizontaal zonder de verticale as aan te raken */
   overflow-x: clip;
   overflow-y: visible;
