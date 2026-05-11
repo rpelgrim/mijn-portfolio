@@ -13,7 +13,7 @@ function App() {
       <div className="main-content">
         <Navbar />
         <Hero />
-        <Work />
+        {/* <Work /> */}
       </div>
       <Footer />
     </>
