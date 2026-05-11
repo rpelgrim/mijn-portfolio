@@ -35,7 +35,7 @@ function MarqueeCopy() {
         <CharReveal
           key={i}
           text={token}
-          className="hero__word hero__word--outlined"
+          className="hero__word"
           baseDelay={tokenDelay(i)}
         />
       ))}
