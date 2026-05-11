@@ -1,0 +1,178 @@
+/* Volledig scherm overlay */
+.contact-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background-color: #e8e6e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--page-padding);
+}
+
+/* Formulier container */
+.contact-form {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Sluitknop */
+.contact-form__close {
+  position: absolute;
+  top: -52px;
+  right: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-neutral-dark);
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease;
+}
+
+.contact-form__close:hover {
+  color: var(--color-neutral-darkest);
+}
+
+.contact-form__close .material-symbols-outlined {
+  font-size: 24px;
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Avatar + bubble rij */
+.contact-form__top {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+/* Ronde profielfoto */
+.contact-form__avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center top;
+  flex-shrink: 0;
+}
+
+/* Chat bubble */
+.contact-form__bubble {
+  background-color: #4c43e8;
+  color: #fff;
+  border-radius: 20px 20px 20px 4px;
+  padding: 20px 24px;
+  font-family: var(--font-sans);
+  font-size: var(--text-regular);
+  line-height: 1.6;
+  max-width: 480px;
+}
+
+/* Input wrapper: rechts uitgelijnd zoals in de referentie */
+.contact-form__input-wrap {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Inputveld */
+.contact-form__input {
+  width: 100%;
+  max-width: 480px;
+  background: #fff;
+  border: none;
+  border-radius: var(--radius-extra-large);
+  padding: 24px 28px;
+  font-family: var(--font-sans);
+  font-size: var(--text-regular);
+  color: var(--color-neutral-darkest);
+  outline: none;
+  resize: none;
+  -webkit-appearance: none;
+}
+
+.contact-form__input::placeholder {
+  color: var(--color-neutral-light);
+}
+
+/* Onderste balk: dots + knop */
+.contact-form__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Voortgangsdots */
+.contact-form__dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.contact-form__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-neutral-lighter);
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.contact-form__dot--active {
+  background-color: var(--color-neutral-darkest);
+  transform: scale(1.3);
+}
+
+.contact-form__dot--done {
+  background-color: var(--color-neutral);
+}
+
+/* Volgende/verstuur knop */
+.contact-form__next {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+  flex-shrink: 0;
+}
+
+.contact-form__next:hover:not(:disabled) {
+  background-color: var(--color-neutral-lightest);
+}
+
+.contact-form__next:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.contact-form__next .material-symbols-outlined {
+  font-size: 20px;
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20;
+}
+
+/* Mobiel */
+@media (max-width: 768px) {
+  .contact-form__avatar {
+    width: 56px;
+    height: 56px;
+  }
+
+  .contact-form__bubble {
+    font-size: var(--text-small);
+    padding: 16px 20px;
+  }
+
+  .contact-form__input {
+    padding: 20px 24px;
+  }
+}
