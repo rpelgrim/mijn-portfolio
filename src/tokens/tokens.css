@@ -1,7 +1,7 @@
 :root {
   /* Fonts — beheerd via CLAUDE.md */
   --font-heading: 'Arimo', system-ui, sans-serif;
-  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
 
   /* Semantische kleuren */
   --color-background: #FFFFFF;

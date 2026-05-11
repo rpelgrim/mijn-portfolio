@@ -9,12 +9,12 @@
 
 ## Fonts (CSS variabelen)
 - `--font-heading`: 'Arimo', system-ui, sans-serif — voor headings en buttons
-- `--font-sans`: 'DM Sans', system-ui, sans-serif — voor tagline en paragraafteksten
+- `--font-sans`: 'Plus Jakarta Sans', system-ui, sans-serif — voor tagline en paragraafteksten
 
 Google Fonts import (in index.html):
 ```
 Arimo:ital,wght@0,400..700;1,400..700
-DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000
+Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800
 ```
 
 ## Kleurenpalet (Figma tokens)

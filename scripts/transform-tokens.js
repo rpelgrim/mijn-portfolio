@@ -81,7 +81,7 @@ const toRem = px => `${px / 16}rem`
 const css = `:root {
   /* Fonts — beheerd via CLAUDE.md */
   --font-heading: 'Arimo', system-ui, sans-serif;
-  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
 
   /* Semantische kleuren */
   --color-background: ${toRgba(scheme['color-scheme-1-background'])};
