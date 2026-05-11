@@ -44,6 +44,7 @@
   gap: var(--section-small);
   flex: 1;
   padding-top: var(--section-medium);
+  padding-bottom: var(--section-medium);
 }
 
 /* Links */
