@@ -1,21 +1,23 @@
 import { useEffect, useRef } from 'react'
 import './CustomCursor.css'
 
-/* Hoe snel de ring de muis volgt (0 = nooit, 1 = direct) */
 const EASE = 0.12
 
+/* Checkt of het element of een voorouder interactief is */
+const isInteractive = (el) =>
+  !!el.closest('a, button, input, textarea, select, label, [role="button"]')
+
 function CustomCursor() {
-  const dotRef = useRef(null)
+  const dotRef  = useRef(null)
   const ringRef = useRef(null)
 
   useEffect(() => {
-    /* Alleen op apparaten met een muis/trackpad */
     if (window.matchMedia('(pointer: coarse)').matches) return
 
     let mouseX = -100
     let mouseY = -100
-    let ringX = -100
-    let ringY = -100
+    let ringX  = -100
+    let ringY  = -100
     let rafId
 
     const onMove = (e) => {
@@ -23,11 +25,25 @@ function CustomCursor() {
       mouseY = e.clientY
     }
 
-    const tick = () => {
-      /* Stip volgt direct */
-      dotRef.current.style.transform = `translate(${mouseX - 6}px, ${mouseY - 6}px)`
+    const onOver = (e) => {
+      if (isInteractive(e.target)) {
+        dotRef.current.classList.add('cursor__dot--hover')
+        ringRef.current.classList.add('cursor__ring--hover')
+      }
+    }
 
-      /* Ring lerpt achter de muis aan */
+    const onOut = (e) => {
+      if (isInteractive(e.target)) {
+        dotRef.current.classList.remove('cursor__dot--hover')
+        ringRef.current.classList.remove('cursor__ring--hover')
+      }
+    }
+
+    /* Stip: vaste breedte 16px, gecentreerd op 8px offset */
+    /* Ring: vaste breedte 32px, gecentreerd op 16px offset */
+    const tick = () => {
+      dotRef.current.style.transform  = `translate(${mouseX - 8}px, ${mouseY - 8}px)`
+
       ringX += (mouseX - ringX) * EASE
       ringY += (mouseY - ringY) * EASE
       ringRef.current.style.transform = `translate(${ringX - 16}px, ${ringY - 16}px)`
@@ -36,17 +52,21 @@ function CustomCursor() {
     }
 
     window.addEventListener('mousemove', onMove)
+    window.addEventListener('mouseover', onOver)
+    window.addEventListener('mouseout',  onOut)
     rafId = requestAnimationFrame(tick)
 
     return () => {
       window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('mouseover', onOver)
+      window.removeEventListener('mouseout',  onOut)
       cancelAnimationFrame(rafId)
     }
   }, [])
 
   return (
     <>
-      <div ref={dotRef} className="cursor__dot" />
+      <div ref={dotRef}  className="cursor__dot" />
       <div ref={ringRef} className="cursor__ring" />
     </>
   )
