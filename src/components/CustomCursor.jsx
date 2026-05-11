@@ -3,6 +3,7 @@ import './CustomCursor.css'
 
 const EASE = 0.12
 
+/* Checkt of het element of een voorouder interactief is */
 const isInteractive = (el) =>
   !!el.closest('a, button, input, textarea, select, label, [role="button"]')
 
@@ -25,24 +26,27 @@ function CustomCursor() {
     }
 
     const onOver = (e) => {
-      if (!isInteractive(e.target)) return
-      dotRef.current.classList.add('cursor__dot--hover')
-      ringRef.current.classList.add('cursor__ring--hover')
+      if (isInteractive(e.target)) {
+        dotRef.current.classList.add('cursor__dot--hover')
+        ringRef.current.classList.add('cursor__ring--hover')
+      }
     }
 
     const onOut = (e) => {
-      if (!isInteractive(e.target)) return
-      dotRef.current.classList.remove('cursor__dot--hover')
-      ringRef.current.classList.remove('cursor__ring--hover')
+      if (isInteractive(e.target)) {
+        dotRef.current.classList.remove('cursor__dot--hover')
+        ringRef.current.classList.remove('cursor__ring--hover')
+      }
     }
 
-    /* Wrapper beweegt naar exacte muispositie; centering via CSS translate(-50%,-50%) */
+    /* Stip: vaste breedte 16px, gecentreerd op 8px offset */
+    /* Ring: vaste breedte 32px, gecentreerd op 16px offset */
     const tick = () => {
-      dotRef.current.style.transform  = `translate(${mouseX}px, ${mouseY}px)`
+      dotRef.current.style.transform  = `translate(${mouseX - 8}px, ${mouseY - 8}px)`
 
       ringX += (mouseX - ringX) * EASE
       ringY += (mouseY - ringY) * EASE
-      ringRef.current.style.transform = `translate(${ringX}px, ${ringY}px)`
+      ringRef.current.style.transform = `translate(${ringX - 16}px, ${ringY - 16}px)`
 
       rafId = requestAnimationFrame(tick)
     }
