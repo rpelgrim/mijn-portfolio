@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import heroBg from '../assets/hero.webp'
+import HeroDistortion from './HeroDistortion'
 import './Hero.css'
 
 function CharReveal({ text, className, baseDelay = 0 }) {
@@ -45,6 +45,7 @@ function MarqueeCopy() {
 
 function Hero() {
   const trackRef = useRef(null)
+  const nameRef  = useRef(null)
 
   useEffect(() => {
     const track = trackRef.current
@@ -94,7 +95,10 @@ function Hero() {
 
   return (
     <section className="hero">
-      <div className="hero__bg" style={{ backgroundImage: `url(${heroBg})` }}>
+      <div className="hero__bg">
+        {/* Three.js achtergrond met pixel distortion op hover heading */}
+        <HeroDistortion nameRef={nameRef} />
+
         <div className="hero__reveal" aria-hidden="true">
           {Array.from({ length: 6 }, (_, i) => (
             <div key={i} className="hero__reveal-col" style={{ '--delay': `${i * 0.06}s` }} />
@@ -102,7 +106,7 @@ function Hero() {
         </div>
 
         <div className="hero__content">
-          <h1 className="hero__name">
+          <h1 className="hero__name" ref={nameRef}>
             <div ref={trackRef} className="hero__marquee-track">
               <MarqueeCopy />
               <MarqueeCopy />
