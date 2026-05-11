@@ -55,8 +55,9 @@
 .hero__char-clip {
   display: inline-block;
   vertical-align: top;
-  /* clip-path ipv overflow zodat stroke/descenders niet worden afgesneden */
-  clip-path: inset(0 0 -8px 0);
+  /* clip-path ipv overflow zodat descenders niet worden afgesneden.
+     Negatieve bottom waarde = extra ruimte onder het karakter. */
+  clip-path: inset(0 0 -0.2em 0);
 }
 
 .hero__char {
@@ -78,6 +79,7 @@
   font-size: clamp(3rem, 19.44vw, 17.5rem);
   letter-spacing: 0.01em;
   line-height: 1;
+  padding-bottom: 0.15em;
   mix-blend-mode: difference;
   /* overflow-x: clip clipped de marquee horizontaal zonder de verticale as aan te raken */
   overflow-x: clip;
