@@ -13,7 +13,7 @@ function App() {
       <div className="main-content">
         <Navbar />
         <Hero />
-        <div style={{ display: 'none' }}><Work /></div>
+        <Work />
       </div>
       <Footer />
     </>
