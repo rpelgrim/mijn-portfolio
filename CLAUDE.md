@@ -23,7 +23,7 @@ Semantisch:
 - `--color-foreground`: #FFFFFF
 - `--color-text`: #000000
 - `--color-border`: #000000
-- `--color-accent`: #000000
+- `--color-accent`: #4C43E8
 
 Primitieven:
 - `--color-white`: #FFFFFF

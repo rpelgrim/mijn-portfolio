@@ -22,7 +22,7 @@
 }
 
 .contact-form__bubble {
-  background-color: #4c43e8;
+  background-color: var(--color-accent);
   color: #fff;
   border-radius: 16px 16px 16px 4px;
   padding: 14px 18px;
