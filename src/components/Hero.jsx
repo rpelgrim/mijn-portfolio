@@ -65,17 +65,27 @@ function Hero() {
     center()
     window.addEventListener('resize', center)
 
+    /* Scrollen voegt een rechts-naar-links boost toe */
     const onScroll = () => {
       const delta = Math.abs(window.scrollY - lastScrollY)
-      scrollBoost = Math.min(scrollBoost + delta * 0.5, 25)
+      scrollBoost = Math.min(scrollBoost + delta * 0.8, 30)
       lastScrollY = window.scrollY
     }
 
     const tick = () => {
       const copyWidth = track.offsetWidth / 2
-      scrollBoost *= 0.3
-      offset += 0.5 + scrollBoost
+
+      /* Boost vervalt langzaam terug naar 0 */
+      scrollBoost *= 0.95
+
+      /* Basissnelheid: -0.5 = links-naar-rechts; boost keert richting om */
+      const velocity = -0.5 + scrollBoost
+      offset += velocity
+
+      /* Wrap voor beide richtingen */
       if (offset >= copyWidth) offset -= copyWidth
+      if (offset < 0) offset += copyWidth
+
       track.style.transform = `translateX(${-offset}px)`
       rafId = requestAnimationFrame(tick)
     }
