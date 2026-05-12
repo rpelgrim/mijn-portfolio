@@ -8,27 +8,33 @@ const menuItems = [
 ]
 
 function Navbar() {
-  const [open, setOpen]   = useState(false)
-  const [dark, setDark]   = useState(false)
+  const [open, setOpen]     = useState(false)
+  const [dark, setDark]     = useState(false)
   const [scroll, setScroll] = useState(0)
+  const [atBottom, setAtBottom] = useState(false)
 
   /* Thema op <html> zetten */
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light')
   }, [dark])
 
-  /* Scrollvoortgang bijhouden */
+  /* Scrollvoortgang bijhouden + navbar verbergen onderaan */
   useEffect(() => {
     const onScroll = () => {
       const max = document.documentElement.scrollHeight - window.innerHeight
-      setScroll(max > 0 ? Math.round((window.scrollY / max) * 100) : 0)
+      const progress = max > 0 ? Math.round((window.scrollY / max) * 100) : 0
+      setScroll(progress)
+      setAtBottom(progress >= 99)
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   return (
-    <div className="navbar-wrapper">
+    <div
+      className={`navbar-wrapper${atBottom ? ' navbar-wrapper--hidden' : ''}`}
+      onAnimationEnd={(e) => { e.currentTarget.style.animation = 'none' }}
+    >
       {/* Dropdown */}
       <div className={`navbar__dropdown${open ? ' navbar__dropdown--open' : ''}`}>
         {menuItems.map(({ label, icon, href }) => (

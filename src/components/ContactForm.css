@@ -52,6 +52,13 @@
   transition: border-color 0.15s ease;
 }
 
+/* iOS zoomt in op inputs met font-size < 16px — voorkomen op touch */
+@media (pointer: coarse) {
+  .contact-form__input {
+    font-size: 16px;
+  }
+}
+
 .contact-form__input::placeholder {
   color: var(--footer-text-muted);
 }

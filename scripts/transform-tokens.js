@@ -78,6 +78,8 @@ const toRgba = ({ r, g, b, a }) =>
 
 const toRem = px => `${px / 16}rem`
 
+const weights = raw['typography-weights']
+
 const css = `:root {
   /* Fonts — beheerd via CLAUDE.md */
   --font-heading: 'Plus Jakarta Sans', system-ui, sans-serif;
@@ -118,6 +120,14 @@ const css = `:root {
   --text-regular: ${toRem(typoDesktop['text-sizes-text-regular'])};
   --text-small: ${toRem(typoDesktop['text-sizes-text-small'])};
   --text-tiny: ${toRem(typoDesktop['text-sizes-text-tiny'])};
+
+  /* Heading weights */
+  --weight-h1: ${weights['weight-heading-1']};
+  --weight-h2: ${weights['weight-heading-2']};
+  --weight-h3: ${weights['weight-heading-3']};
+  --weight-h4: ${weights['weight-heading-4']};
+  --weight-h5: ${weights['weight-heading-5']};
+  --weight-h6: ${weights['weight-heading-6']};
 
   /* Spacing — desktop */
   --page-padding: ${spacingDesktop['page-padding-padding-global']}px;

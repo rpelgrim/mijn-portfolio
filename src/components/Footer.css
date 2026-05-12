@@ -65,7 +65,7 @@
 .footer__heading {
   font-family: var(--font-heading);
   font-size: var(--text-h2);
-  font-weight: 500;
+  font-weight: var(--weight-h2);
   line-height: 1.1;
   margin: 0;
   color: var(--footer-text);

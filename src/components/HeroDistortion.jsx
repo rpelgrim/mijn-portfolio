@@ -49,7 +49,7 @@ const frag = /* glsl */`
   }
 `
 
-function HeroDistortion({ nameRef }) {
+function HeroDistortion() {
   const canvasRef = useRef(null)
 
   useEffect(() => {
@@ -57,7 +57,6 @@ function HeroDistortion({ nameRef }) {
     let cancelled = false
     let dispose = null
 
-    /* Three.js dynamisch laden zodat het een aparte chunk wordt */
     import('three').then((THREE) => {
       if (cancelled) return
 
@@ -99,6 +98,30 @@ function HeroDistortion({ nameRef }) {
       let targetStrength = 0
       let currentStrength = 0
       const targetMouse = new THREE.Vector2(0.5, 0.5)
+      let rafId = null
+      let idleTimer = null
+
+      const tick = (t) => {
+        uniforms.uTime.value      = t * 0.001
+        currentStrength          += (targetStrength - currentStrength) * 0.05
+        uniforms.uStrength.value  = currentStrength
+        uniforms.uMouse.value.lerp(targetMouse, 0.08)
+        renderer.render(scene, camera)
+
+        /* Stop de loop zodra het effect volledig is uitgevaagd */
+        if (targetStrength === 0 && currentStrength < 0.001) {
+          uniforms.uStrength.value = 0
+          currentStrength = 0
+          rafId = null
+          return
+        }
+
+        rafId = requestAnimationFrame(tick)
+      }
+
+      const startLoop = () => {
+        if (!rafId) rafId = requestAnimationFrame(tick)
+      }
 
       const onMouseMove = (e) => {
         const rect = canvas.getBoundingClientRect()
@@ -106,33 +129,21 @@ function HeroDistortion({ nameRef }) {
           (e.clientX - rect.left) / rect.width,
           1.0 - (e.clientY - rect.top) / rect.height
         )
+        targetStrength = 1
+        startLoop()
+
+        /* Zet effect uit na 150ms stilstand */
+        clearTimeout(idleTimer)
+        idleTimer = setTimeout(() => { targetStrength = 0 }, 150)
       }
 
-      const onEnter = () => { targetStrength = 1 }
-      const onLeave = () => { targetStrength = 0 }
-
-      const heading = nameRef?.current
-      heading?.addEventListener('mouseenter', onEnter)
-      heading?.addEventListener('mouseleave', onLeave)
       canvas.parentElement.addEventListener('mousemove', onMouseMove)
-
-      let rafId
-      const tick = (t) => {
-        uniforms.uTime.value     = t * 0.001
-        currentStrength         += (targetStrength - currentStrength) * 0.05
-        uniforms.uStrength.value = currentStrength
-        uniforms.uMouse.value.lerp(targetMouse, 0.08)
-        renderer.render(scene, camera)
-        rafId = requestAnimationFrame(tick)
-      }
-      rafId = requestAnimationFrame(tick)
 
       dispose = () => {
         window.removeEventListener('resize', resize)
         canvas.parentElement?.removeEventListener('mousemove', onMouseMove)
-        heading?.removeEventListener('mouseenter', onEnter)
-        heading?.removeEventListener('mouseleave', onLeave)
-        cancelAnimationFrame(rafId)
+        clearTimeout(idleTimer)
+        if (rafId) cancelAnimationFrame(rafId)
         renderer.dispose()
         mat.dispose()
         geo.dispose()
@@ -143,7 +154,7 @@ function HeroDistortion({ nameRef }) {
       cancelled = true
       dispose?.()
     }
-  }, [nameRef])
+  }, [])
 
   return (
     <canvas

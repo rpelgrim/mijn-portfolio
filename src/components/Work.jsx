@@ -78,7 +78,7 @@ function Work() {
         <div className="work__scroll" ref={scrollRef}>
           <div className="work__track" ref={trackRef}>
             {projects.map((project) => (
-              <article key={project.id} className="work__card">
+              <article key={project.id} className="work__card" data-cursor="bekijk">
                 <div className="work__card-image">
                   <span className="material-symbols-outlined work__card-placeholder">image</span>
                 </div>

@@ -39,6 +39,14 @@
   --text-small: 0.875rem;
   --text-tiny: 0.75rem;
 
+  /* Heading weights */
+  --weight-h1: 800;
+  --weight-h2: 800;
+  --weight-h3: 700;
+  --weight-h4: 700;
+  --weight-h5: 600;
+  --weight-h6: 600;
+
   /* Spacing — desktop */
   --page-padding: 64px;
   --section-tiny: 32px;

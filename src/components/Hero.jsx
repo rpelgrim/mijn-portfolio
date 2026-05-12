@@ -45,53 +45,36 @@ function MarqueeCopy() {
 
 function Hero() {
   const trackRef = useRef(null)
-  const nameRef  = useRef(null)
 
   useEffect(() => {
     const track = trackRef.current
     if (!track) return
 
-    let offset      = 0
-    let scrollBoost = 0
-    let lastScrollY = window.scrollY
+    let offset = 0
     let rafId
 
-    /* Initieel gecentreerd inladen */
+    /* Initieel gecentreerd inladen in kopie 2 (middelste) */
     const center = () => {
-      const copyWidth = track.offsetWidth / 2
-      offset = Math.max(0, (copyWidth - window.innerWidth) / 2)
+      const cw = track.offsetWidth / 3
+      offset = cw + Math.max(0, (cw - window.innerWidth) / 2)
       track.style.transform = `translateX(${-offset}px)`
     }
     center()
     window.addEventListener('resize', center)
 
-    /* Scrollen voegt een rechts-naar-links boost toe */
-    const onScroll = () => {
-      const delta = Math.abs(window.scrollY - lastScrollY)
-      scrollBoost = Math.min(scrollBoost + delta * 0.8, 30)
-      lastScrollY = window.scrollY
-    }
-
     const tick = () => {
-      const copyWidth = track.offsetWidth / 2
+      const cw = track.offsetWidth / 3
 
-      /* Boost vervalt langzaam terug naar 0 */
-      scrollBoost *= 0.95
+      offset -= 0.5
 
-      /* Basissnelheid: -0.5 = links-naar-rechts; boost keert richting om */
-      const velocity = -0.5 + scrollBoost
-      offset += velocity
-
-      /* Wrap voor beide richtingen */
-      if (offset >= copyWidth) offset -= copyWidth
-      if (offset < 0) offset += copyWidth
+      if (offset < cw) offset += cw
+      if (offset >= 2 * cw) offset -= cw
 
       track.style.transform = `translateX(${-offset}px)`
       rafId = requestAnimationFrame(tick)
     }
 
     const timeout = setTimeout(() => {
-      window.addEventListener('scroll', onScroll, { passive: true })
       rafId = requestAnimationFrame(tick)
     }, REVEAL_END_MS)
 
@@ -99,7 +82,6 @@ function Hero() {
       clearTimeout(timeout)
       cancelAnimationFrame(rafId)
       window.removeEventListener('resize', center)
-      window.removeEventListener('scroll', onScroll)
     }
   }, [])
 
@@ -107,7 +89,7 @@ function Hero() {
     <section className="hero">
       <div className="hero__bg">
         {/* Three.js achtergrond met pixel distortion op hover heading */}
-        <HeroDistortion nameRef={nameRef} />
+        <HeroDistortion />
 
         <div className="hero__reveal" aria-hidden="true">
           {Array.from({ length: 6 }, (_, i) => (
@@ -116,8 +98,9 @@ function Hero() {
         </div>
 
         <div className="hero__content">
-          <h1 className="hero__name" ref={nameRef}>
+          <h1 className="hero__name">
             <div ref={trackRef} className="hero__marquee-track">
+              <MarqueeCopy />
               <MarqueeCopy />
               <MarqueeCopy />
             </div>
