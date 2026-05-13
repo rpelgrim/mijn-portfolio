@@ -17,7 +17,7 @@
   transform: translateX(-50%);
   z-index: 100;
 
-  background-color: var(--opacity-white-30);
+  background-color: var(--opacity-white-60);
   border-radius: var(--radius-medium);
   box-shadow: 0 4px 24px var(--opacity-neutral-darkest-40);
   overflow: hidden;
@@ -85,7 +85,7 @@
 .navbar__name {
   font-family: var(--font-heading);
   font-size: var(--text-small);
-  font-weight: 600;
+  font-weight: 500;
   color: var(--color-text);
   line-height: 1.2;
 }
@@ -284,7 +284,7 @@
 }
 
 [data-theme="dark"] .navbar-wrapper {
-  background-color: var(--opacity-white-30);
+  background-color: var(--opacity-white-60);
 }
 
 /* Dark theme */
@@ -299,6 +299,7 @@
   --color-white: #1A1A1A;
   --color-neutral-darkest: #F5F5F5;
   --opacity-white-30: rgba(26, 26, 26, 0.3);
+  --opacity-white-60: rgba(26, 26, 26, 0.6);
   --opacity-white-50: rgba(26, 26, 26, 0.5);
   --opacity-white-70: rgba(26, 26, 26, 0.7);
   --opacity-white-80: rgba(26, 26, 26, 0.8);

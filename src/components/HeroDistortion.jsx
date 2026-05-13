@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react'
-import heroVideo from '../assets/hero-video-rp.mp4'
 
 const vert = /* glsl */`
   varying vec2 vUv;
@@ -48,29 +47,75 @@ const frag = /* glsl */`
   }
 `
 
+/* Alle frames als gesorteerde URL-array via Vite glob */
+const frameModules = import.meta.glob('../assets/hero-frames/*.jpg', { eager: true })
+const FRAME_URLS = Object.keys(frameModules).sort().map(k => frameModules[k].default)
+
 function HeroDistortion() {
   const canvasRef = useRef(null)
-  const videoRef  = useRef(null)
-
   const isTouch = window.matchMedia('(pointer: coarse)').matches
 
   useEffect(() => {
-    const video = videoRef.current
-    if (!video) return
+    /* Preload alle frames */
+    const images = FRAME_URLS.map(url => {
+      const img = new Image()
+      img.src = url
+      return img
+    })
 
-    /* Scrub video mee met scrollpositie */
-    const scrub = () => {
+    const getFrameIndex = () => {
       const max = document.documentElement.scrollHeight - window.innerHeight
-      if (max <= 0 || !video.duration) return
-      video.currentTime = (window.scrollY / max) * video.duration
+      if (max <= 0) return 0
+      return Math.round(Math.min(window.scrollY / max, 1) * (images.length - 1))
     }
-    window.addEventListener('scroll', scrub, { passive: true })
 
+    /* Touch: Canvas 2D image sequence */
     if (isTouch) {
-      return () => window.removeEventListener('scroll', scrub)
+      const canvas = canvasRef.current
+      const ctx = canvas.getContext('2d')
+      let currentIndex = -1
+
+      const setSize = () => {
+        canvas.width  = canvas.offsetWidth  * devicePixelRatio
+        canvas.height = canvas.offsetHeight * devicePixelRatio
+      }
+      setSize()
+      window.addEventListener('resize', setSize)
+
+      const drawFrame = (img) => {
+        const w = canvas.width, h = canvas.height
+        const iAspect = img.naturalWidth / img.naturalHeight
+        const cAspect = w / h
+        let sx, sy, sw, sh
+        if (cAspect > iAspect) {
+          sw = img.naturalWidth;  sh = sw / cAspect
+          sx = 0;                 sy = (img.naturalHeight - sh) / 2
+        } else {
+          sh = img.naturalHeight; sw = sh * cAspect
+          sx = (img.naturalWidth - sw) / 2; sy = 0
+        }
+        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, w, h)
+      }
+
+      const showFrame = (index) => {
+        if (index === currentIndex) return
+        currentIndex = index
+        const img = images[index]
+        if (img.complete) drawFrame(img)
+        else img.onload = () => drawFrame(img)
+      }
+
+      showFrame(0)
+      const onScroll = () => showFrame(getFrameIndex())
+      window.addEventListener('scroll', onScroll, { passive: true })
+
+      return () => {
+        window.removeEventListener('scroll', onScroll)
+        window.removeEventListener('resize', setSize)
+      }
     }
 
-    /* Desktop: Three.js shader met VideoTexture */
+    /* Desktop: Three.js shader met image sequence */
     const canvas = canvasRef.current
     let cancelled = false
     let dispose   = null
@@ -79,21 +124,32 @@ function HeroDistortion() {
       if (cancelled) return
 
       const renderer = new THREE.WebGLRenderer({ canvas, alpha: false, antialias: false })
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2))
 
-      const scene  = new THREE.Scene()
-      const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
-      const geo    = new THREE.PlaneGeometry(2, 2)
-
+      const scene    = new THREE.Scene()
+      const camera   = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
+      const geo      = new THREE.PlaneGeometry(2, 2)
       const resolution = new THREE.Vector2()
       const imageSize  = new THREE.Vector2(1920, 1080)
 
-      const texture = new THREE.VideoTexture(video)
+      const texture = new THREE.Texture()
       texture.minFilter = THREE.LinearFilter
+      texture.magFilter = THREE.LinearFilter
 
-      video.addEventListener('loadedmetadata', () => {
-        imageSize.set(video.videoWidth, video.videoHeight)
-      })
+      let currentIndex = -1
+      const showFrame = (index) => {
+        if (index === currentIndex) return
+        currentIndex = index
+        const img = images[index]
+        const apply = () => {
+          imageSize.set(img.naturalWidth, img.naturalHeight)
+          texture.image = img
+          texture.needsUpdate = true
+        }
+        if (img.complete) apply()
+        else img.onload = apply
+      }
+      showFrame(0)
 
       const uniforms = {
         uTex:        { value: texture },
@@ -115,23 +171,23 @@ function HeroDistortion() {
       resize()
       window.addEventListener('resize', resize)
 
-      let targetStrength = 0
-      let currentStrength = 0
+      let targetStrength = 0, currentStrength = 0
       const targetMouse = new THREE.Vector2(0.5, 0.5)
-      let rafId = null
-      let idleTimer = null
+      let rafId = null, idleTimer = null
 
       const tick = (t) => {
         if (cancelled) return
-        texture.needsUpdate       = true
-        uniforms.uTime.value      = t * 0.001
-        currentStrength          += (targetStrength - currentStrength) * 0.05
-        uniforms.uStrength.value  = currentStrength
+        uniforms.uTime.value     = t * 0.001
+        currentStrength         += (targetStrength - currentStrength) * 0.05
+        uniforms.uStrength.value = currentStrength
         uniforms.uMouse.value.lerp(targetMouse, 0.08)
         renderer.render(scene, camera)
         rafId = requestAnimationFrame(tick)
       }
       rafId = requestAnimationFrame(tick)
+
+      const onScroll = () => showFrame(getFrameIndex())
+      window.addEventListener('scroll', onScroll, { passive: true })
 
       const onMouseMove = (e) => {
         const rect = canvas.getBoundingClientRect()
@@ -143,11 +199,11 @@ function HeroDistortion() {
         clearTimeout(idleTimer)
         idleTimer = setTimeout(() => { targetStrength = 0 }, 150)
       }
-
       canvas.parentElement.addEventListener('mousemove', onMouseMove)
 
       dispose = () => {
         window.removeEventListener('resize', resize)
+        window.removeEventListener('scroll', onScroll)
         canvas.parentElement?.removeEventListener('mousemove', onMouseMove)
         clearTimeout(idleTimer)
         if (rafId) cancelAnimationFrame(rafId)
@@ -161,47 +217,21 @@ function HeroDistortion() {
     return () => {
       cancelled = true
       dispose?.()
-      window.removeEventListener('scroll', scrub)
     }
   }, [])
 
   return (
-    <>
-      {/* Video element — zichtbaar op touch, verborgen op desktop (gebruikt als texture) */}
-      <video
-        ref={videoRef}
-        src={heroVideo}
-        muted
-        playsInline
-        preload="auto"
-        style={isTouch ? {
-          position: 'absolute',
-          inset: 0,
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          objectPosition: 'center',
-          pointerEvents: 'none',
-          zIndex: 0,
-        } : {
-          display: 'none',
-        }}
-      />
-
-      {!isTouch && (
-        <canvas
-          ref={canvasRef}
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            pointerEvents: 'none',
-            zIndex: 0,
-          }}
-        />
-      )}
-    </>
+    <canvas
+      ref={canvasRef}
+      style={{
+        position: 'absolute',
+        inset: 0,
+        width: '100%',
+        height: '100%',
+        pointerEvents: 'none',
+        zIndex: 0,
+      }}
+    />
   )
 }
 
