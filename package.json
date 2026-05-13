@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist -t",
-    "tokens": "node scripts/transform-tokens.js"
+    "tokens": "node scripts/transform-tokens.js",
+    "optimize-images": "node scripts/optimize-images.js"
   },
   "dependencies": {
     "react": "^19.2.5",
@@ -28,6 +29,7 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "gh-pages": "^6.3.0",
     "globals": "^17.5.0",
+    "sharp": "^0.34.5",
     "vite": "^8.0.10"
   }
 }
