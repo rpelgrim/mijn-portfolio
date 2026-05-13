@@ -1,113 +1,180 @@
-/* Wrapper bepaalt de totale scrollhoogte; hoogte gezet via JS */
-.work-wrapper {
-  position: relative;
-  overflow-x: clip;
-}
-
-/* Sticky sectie vult altijd het scherm */
-.work {
-  position: sticky;
-  top: 0;
-  height: 100svh;
-  display: flex;
-  flex-direction: column;
-  padding: var(--section-medium) var(--page-padding);
-  gap: var(--section-small);
-}
-
-/* Header */
-.work__header {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex-shrink: 0;
-}
+/* === Gedeelde typografie === */
 
 .work__title {
   font-family: var(--font-heading);
-  font-size: var(--text-h2);
-  font-weight: var(--weight-h2);
+  font-size: var(--text-h3);
+  font-weight: var(--weight-h3);
   color: var(--color-text);
-  line-height: 1;
+  margin: 0;
+  line-height: 1.05;
+}
+
+.work__desc {
+  font-family: var(--font-sans);
+  font-size: var(--text-large);
+  font-weight: 400;
+  color: var(--color-neutral-dark);
+  line-height: 1.6;
   margin: 0;
 }
 
-.work__description {
+.work__link {
+  display: inline-block;
   font-family: var(--font-sans);
   font-size: var(--text-regular);
   font-weight: 400;
-  color: var(--color-neutral);
-  margin: 0;
-}
-
-/* Scroll container — overflow hidden, JS stuurt de translate */
-.work__scroll {
-  flex: 1;
-  display: flex;
-  align-items: center;
-}
-
-/* Track verschuift horizontaal via translateX */
-.work__track {
-  display: flex;
-  gap: 16px;
-  will-change: transform;
-  /* Rechts padding zorgt voor ademruimte bij het laatste project */
-  padding-right: var(--page-padding);
-}
-
-/* Kaart */
-.work__card {
-  flex-shrink: 0;
-  width: 560px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.work__card-image {
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  background-color: var(--color-neutral-lightest);
-  border-radius: var(--radius-large);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.work__card-placeholder {
-  font-size: 48px;
-  font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 48;
-  color: var(--color-neutral-light);
-}
-
-.work__card-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.work__card-category {
-  font-family: var(--font-sans);
-  font-size: var(--text-tiny);
-  font-weight: 400;
-  color: var(--color-neutral);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.work__card-title {
-  font-family: var(--font-heading);
-  font-size: var(--text-h5);
-  font-weight: var(--weight-h5);
   color: var(--color-text);
-  margin: 0;
-  line-height: 1.2;
+  text-decoration: none;
+  width: fit-content;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+  background-position: 100% 100%;
+  padding-bottom: 2px;
+  /* Hover-uit: size groeit direct (L→R want positie=links), daarna positie terug naar rechts */
+  transition: background-size 0.4s ease, background-position 0s 0.4s;
 }
 
-/* Mobiel — smallere kaarten */
-@media (max-width: 768px) {
-  .work__card {
-    width: 80vw;
+.work__link:hover {
+  background-size: 0% 1px;
+  background-position: 0% 100%;
+  /* Hover-in: size krimpt direct (L→R want positie=rechts), daarna positie naar links */
+  transition: background-size 0.4s ease, background-position 0s 0.4s;
+}
+
+/* === Desktop === */
+@media (min-width: 769px) {
+  .work-wrapper {
+    position: relative;
   }
+
+  /* Mobiel markup verbergen op desktop */
+  .work-mobile {
+    display: none;
+  }
+
+  /* Sticky sectie */
+  .work--desktop {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    display: flex;
+    flex-direction: column;
+    padding: var(--section-small) var(--page-padding);
+    overflow: hidden;
+  }
+
+  /* Tweekoloms raster: afbeelding (3) | info (2) */
+  .work__stage {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: var(--section-small);
+    min-height: 0;
+  }
+
+  /* Vaste afbeeldingscontainer — beweegt nooit */
+  .work__image-col {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-large);
+    background-color: var(--color-neutral-lightest);
+  }
+
+  /* Afbeeldingen stapelen absoluut; transform wordt direct via JS gezet (scrub) */
+  .work__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: translateY(100%);
+    will-change: transform;
+  }
+
+  /* Info kolom */
+  .work__info-col {
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Track scrubbet direct mee met scroll — geen transition, geen lerp */
+  .work__info-track {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    will-change: transform;
+  }
+
+  /* Elk info-blok neemt exact de volledige hoogte van de kolom */
+  .work__info {
+    flex: 0 0 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  /* Teller rechtsonder in de sticky sectie */
+  .work__counter {
+    position: absolute;
+    bottom: var(--section-small);
+    right: var(--page-padding);
+    font-family: var(--font-sans);
+    font-size: var(--text-small);
+    font-weight: 400;
+    color: var(--color-neutral);
+  }
+}
+
+/* === Mobiel === */
+@media (max-width: 768px) {
+  .work-wrapper {
+    height: auto !important;
+  }
+
+  /* Desktop markup verbergen op mobiel */
+  .work--desktop {
+    display: none;
+  }
+
+  .work-mobile {
+    padding-top: var(--section-medium);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Cards zijn sticky en schuiven over elkaar heen via DOM-volgorde */
+  .work-mobile__card {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: var(--section-small) var(--page-padding) var(--section-medium);
+    background: var(--color-background);
+    border-radius: var(--radius-large) var(--radius-large) 0 0;
+  }
+
+  .work-mobile__image {
+    overflow: hidden;
+    border-radius: var(--radius-medium);
+    aspect-ratio: 4 / 3;
+    background-color: var(--color-neutral-lightest);
+  }
+
+  .work-mobile__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .work-mobile__info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
 }

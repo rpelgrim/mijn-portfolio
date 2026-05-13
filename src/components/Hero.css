@@ -24,46 +24,6 @@
   justify-content: center;
 }
 
-/* Reveal overlay */
-@keyframes col-reveal {
-  from { transform: scaleY(1); }
-  to   { transform: scaleY(0); }
-}
-
-.hero__reveal {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.hero__reveal-col {
-  flex: 1;
-  background-color: var(--color-background);
-  transform-origin: top;
-  animation: col-reveal 0.9s cubic-bezier(0.76, 0, 0.24, 1) var(--delay, 0s) both;
-}
-
-/* Karakter animatie */
-@keyframes char-up {
-  from { transform: translateY(110%); }
-  to   { transform: translateY(0); }
-}
-
-/* Clip-wrapper: verbergt het karakter totdat het omhoog glijdt */
-.hero__char-clip {
-  display: inline-block;
-  vertical-align: top;
-  /* clip-path ipv overflow zodat descenders niet worden afgesneden.
-     Negatieve bottom waarde = extra ruimte onder het karakter. */
-  clip-path: inset(0 0 -0.2em 0);
-}
-
-.hero__char {
-  display: inline-block;
-  animation: char-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
 
 .hero__content {
   position: relative;
@@ -106,7 +66,7 @@
 
 .hero__word {
   display: inline;
-  color: #fff;
+  color: var(--opacity-white-20);
 }
 
 .hero__word--outlined {

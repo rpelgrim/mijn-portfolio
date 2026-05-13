@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import heroBg from '../assets/hero.webp'
+import heroVideo from '../assets/hero-video-rp.mp4'
 
 const vert = /* glsl */`
   varying vec2 vUv;
@@ -21,7 +21,6 @@ const frag = /* glsl */`
 
   varying vec2 vUv;
 
-  /* Berekent UV voor background-size: cover gedrag */
   vec2 coverUv(vec2 uv) {
     float sAspect = uResolution.x / uResolution.y;
     float iAspect = uImageSize.x  / uImageSize.y;
@@ -51,11 +50,30 @@ const frag = /* glsl */`
 
 function HeroDistortion() {
   const canvasRef = useRef(null)
+  const videoRef  = useRef(null)
+
+  const isTouch = window.matchMedia('(pointer: coarse)').matches
 
   useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    /* Scrub video mee met scrollpositie */
+    const scrub = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight
+      if (max <= 0 || !video.duration) return
+      video.currentTime = (window.scrollY / max) * video.duration
+    }
+    window.addEventListener('scroll', scrub, { passive: true })
+
+    if (isTouch) {
+      return () => window.removeEventListener('scroll', scrub)
+    }
+
+    /* Desktop: Three.js shader met VideoTexture */
     const canvas = canvasRef.current
     let cancelled = false
-    let dispose = null
+    let dispose   = null
 
     import('three').then((THREE) => {
       if (cancelled) return
@@ -68,12 +86,14 @@ function HeroDistortion() {
       const geo    = new THREE.PlaneGeometry(2, 2)
 
       const resolution = new THREE.Vector2()
-      const imageSize  = new THREE.Vector2(1, 1)
+      const imageSize  = new THREE.Vector2(1920, 1080)
 
-      const texture = new THREE.TextureLoader().load(heroBg, (tex) => {
-        imageSize.set(tex.image.naturalWidth, tex.image.naturalHeight)
-      })
+      const texture = new THREE.VideoTexture(video)
       texture.minFilter = THREE.LinearFilter
+
+      video.addEventListener('loadedmetadata', () => {
+        imageSize.set(video.videoWidth, video.videoHeight)
+      })
 
       const uniforms = {
         uTex:        { value: texture },
@@ -102,26 +122,16 @@ function HeroDistortion() {
       let idleTimer = null
 
       const tick = (t) => {
+        if (cancelled) return
+        texture.needsUpdate       = true
         uniforms.uTime.value      = t * 0.001
         currentStrength          += (targetStrength - currentStrength) * 0.05
         uniforms.uStrength.value  = currentStrength
         uniforms.uMouse.value.lerp(targetMouse, 0.08)
         renderer.render(scene, camera)
-
-        /* Stop de loop zodra het effect volledig is uitgevaagd */
-        if (targetStrength === 0 && currentStrength < 0.001) {
-          uniforms.uStrength.value = 0
-          currentStrength = 0
-          rafId = null
-          return
-        }
-
         rafId = requestAnimationFrame(tick)
       }
-
-      const startLoop = () => {
-        if (!rafId) rafId = requestAnimationFrame(tick)
-      }
+      rafId = requestAnimationFrame(tick)
 
       const onMouseMove = (e) => {
         const rect = canvas.getBoundingClientRect()
@@ -130,9 +140,6 @@ function HeroDistortion() {
           1.0 - (e.clientY - rect.top) / rect.height
         )
         targetStrength = 1
-        startLoop()
-
-        /* Zet effect uit na 150ms stilstand */
         clearTimeout(idleTimer)
         idleTimer = setTimeout(() => { targetStrength = 0 }, 150)
       }
@@ -144,6 +151,7 @@ function HeroDistortion() {
         canvas.parentElement?.removeEventListener('mousemove', onMouseMove)
         clearTimeout(idleTimer)
         if (rafId) cancelAnimationFrame(rafId)
+        texture.dispose()
         renderer.dispose()
         mat.dispose()
         geo.dispose()
@@ -153,21 +161,47 @@ function HeroDistortion() {
     return () => {
       cancelled = true
       dispose?.()
+      window.removeEventListener('scroll', scrub)
     }
   }, [])
 
   return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: 'absolute',
-        inset: 0,
-        width: '100%',
-        height: '100%',
-        pointerEvents: 'none',
-        zIndex: 0,
-      }}
-    />
+    <>
+      {/* Video element — zichtbaar op touch, verborgen op desktop (gebruikt als texture) */}
+      <video
+        ref={videoRef}
+        src={heroVideo}
+        muted
+        playsInline
+        preload="auto"
+        style={isTouch ? {
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          objectPosition: 'center',
+          pointerEvents: 'none',
+          zIndex: 0,
+        } : {
+          display: 'none',
+        }}
+      />
+
+      {!isTouch && (
+        <canvas
+          ref={canvasRef}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'none',
+            zIndex: 0,
+          }}
+        />
+      )}
+    </>
   )
 }
 

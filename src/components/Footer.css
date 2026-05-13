@@ -38,21 +38,23 @@
 
 /* Bovenste rij */
 .footer__top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: var(--section-small);
-  flex: 1;
-  padding-top: var(--section-medium);
-  padding-bottom: var(--section-medium);
+  padding-top: var(--section-large);
+  padding-bottom: var(--section-small);
 }
 
-/* Links */
 .footer__left {
   display: flex;
   flex-direction: column;
-  gap: 40px;
-  max-width: 560px;
+  gap: 48px;
+}
+
+.footer__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .footer__label {
@@ -94,6 +96,15 @@
 
 .footer__cta:hover {
   background-color: var(--footer-cta-hover);
+}
+
+.footer__desc {
+  font-family: var(--font-sans);
+  font-size: var(--text-large);
+  font-weight: 400;
+  color: var(--color-neutral-dark);
+  line-height: 1.6;
+  margin: 0;
 }
 
 /* Rechts */
@@ -160,12 +171,7 @@
 /* Mobiel */
 @media (max-width: 768px) {
   .footer__top {
-    flex-direction: column;
-    gap: 24px;
-  }
-
-  .footer__right {
-    gap: 40px;
-    padding-top: 0;
+    grid-template-columns: 1fr;
+    gap: 64px;
   }
 }

@@ -7,12 +7,13 @@ function Footer() {
       <div className="footer__inner">
         <div className="footer__top">
           <div className="footer__left">
-            <h2 className="footer__heading">Laten we samen<br />iets moois maken</h2>
-          </div>
-
-          <div className="footer__right">
+            <div className="footer__intro">
+              <h2 className="footer__heading">Laten we samen<br />iets moois maken</h2>
+              <p className="footer__desc">Beschikbaar voor nieuwe projecten en samenwerkingen. Stuur een bericht en ik reageer zo snel mogelijk.</p>
+            </div>
             <ContactForm />
           </div>
+          <div className="footer__right" />
         </div>
 
         <div className="footer__bottom">
