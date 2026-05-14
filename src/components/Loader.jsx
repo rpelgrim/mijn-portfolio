@@ -42,7 +42,7 @@ function YearDisplay({ yearIdx }) {
         ))}
       </div>
       <div className="loader__age" aria-hidden="true">
-        {ages[yearIdx]} jaar
+        {ages[yearIdx] === 0 ? 'geboren' : `${ages[yearIdx]} jaar`}
       </div>
     </div>
   )
