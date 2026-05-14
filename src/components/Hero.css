@@ -1,9 +1,6 @@
 .hero {
   margin: 16px;
   height: calc(100svh - 32px);
-  /* Vertelt iOS dat touch-events hier alleen verticaal mogen scrollen.
-     Zonder dit herkent iOS de brede marquee-track als horizontaal scrollbare
-     inhoud en onderschept het touch-events, waardoor verticaal scrollen blokkeert. */
   touch-action: pan-y;
 }
 
@@ -15,61 +12,8 @@
   background-color: var(--color-neutral-lighter);
   background-size: cover;
   background-position: center;
-  /* clip ipv hidden: knipt visueel hetzelfde maar maakt geen scroll container aan.
-     overflow: hidden liet iOS de brede marquee-track detecteren als horizontaal
-     scrollbare inhoud, wat verticaal touch-scrollen blokkeerde. */
   overflow: clip;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-
-.hero__content {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
-.hero__name {
-  font-family: var(--font-heading);
-  font-weight: var(--weight-h1);
-  /* 280px op 1440px desktop, schaalt vloeiend naar beneden */
-  font-size: clamp(2.5rem, 16.67vw, 15rem);
-  letter-spacing: 0.01em;
-  line-height: 1;
-  padding-bottom: 0.15em;
-  /* overflow-x: clip clipped de marquee horizontaal zonder de verticale as aan te raken */
-  overflow-x: clip;
-  overflow-y: visible;
-  width: 100%;
-  margin: 0;
-}
-
-/* Marquee track: twee kopieën naast elkaar, translateX via JS */
-.hero__marquee-track {
-  display: flex;
-  width: max-content;
-  will-change: transform;
-  touch-action: pan-y;
-}
-
-.hero__marquee-copy {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 16px;
-  white-space: nowrap;
-}
-
-.hero__word {
-  display: inline;
-  color: var(--opacity-white-20);
-}
-
-.hero__word--outlined {
-  color: transparent;
-  -webkit-text-stroke: 1px #fff;
 }
