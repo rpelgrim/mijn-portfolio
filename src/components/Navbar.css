@@ -251,7 +251,7 @@
 
 [data-theme="dark"] .navbar__title,
 [data-theme="dark"] .navbar__theme-label {
-  color: var(--opacity-white-60);
+  color: var(--opacity-white-80);
 }
 
 [data-theme="dark"] .navbar__logo {
@@ -280,7 +280,7 @@
 
 [data-theme="dark"] .navbar__progress-pill {
   background-color: var(--opacity-neutral-darkest-5);
-  color: var(--opacity-white-60);
+  color: var(--opacity-white-80);
 }
 
 [data-theme="dark"] .navbar-wrapper {
@@ -298,9 +298,5 @@
   --color-neutral: #888888;
   --color-white: #1A1A1A;
   --color-neutral-darkest: #F5F5F5;
-  --opacity-white-30: rgba(26, 26, 26, 0.3);
   --opacity-white-60: rgba(26, 26, 26, 0.6);
-  --opacity-white-50: rgba(26, 26, 26, 0.5);
-  --opacity-white-70: rgba(26, 26, 26, 0.7);
-  --opacity-white-80: rgba(26, 26, 26, 0.8);
 }

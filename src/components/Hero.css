@@ -50,12 +50,12 @@
 /* Rowdy Pelgrim */
 .hero__name {
   font-family: var(--font-heading);
-  font-size: clamp(3.5rem, 9.5vw, 8.5rem);
-  font-weight: 800;
-  text-align: left;
-  line-height: 0.95;
-  letter-spacing: -0.02em;
+  font-size: 1rem;
   font-weight: 500;
+  text-align: left;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  padding-bottom: 0.2em;
 }
 
 /* Digital Designer */
@@ -65,6 +65,15 @@
   font-weight: 400;
   text-align: right;
   letter-spacing: 0.01em;
+}
+
+/* Dark theme gradient — omgedraaid naar neutral darkest */
+[data-theme="dark"] .hero__eyebrow,
+[data-theme="dark"] .hero__name,
+[data-theme="dark"] .hero__role {
+  background: linear-gradient(to bottom, var(--opacity-neutral-darkest-60), var(--opacity-neutral-darkest-40));
+  -webkit-background-clip: text;
+  background-clip: text;
 }
 
 /* ── Intro-animaties ── */

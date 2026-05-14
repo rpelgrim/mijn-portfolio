@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import HeroDistortion from './HeroDistortion'
 import Loader from './Loader'
 import './Hero.css'
@@ -8,9 +8,34 @@ function Hero() {
   const [loaderDone, setLoaderDone] = useState(false)
   const ready = framesDone && loaderDone
 
+  const contentRef = useRef(null)
   const eyebrowRef = useRef(null)
   const nameRef    = useRef(null)
   const roleRef    = useRef(null)
+
+  /* Heading vult altijd de volledige containerbreedte */
+  useLayoutEffect(() => {
+    const fit = () => {
+      const container = contentRef.current
+      const name      = nameRef.current
+      if (!container || !name) return
+      const containerWidth = container.getBoundingClientRect().width
+      if (containerWidth === 0) return
+      /* Meet intrinsieke tekstbreedte via max-content */
+      name.style.fontSize = '100px'
+      name.style.width    = 'max-content'
+      const textWidth     = name.getBoundingClientRect().width
+      name.style.width    = ''
+      if (textWidth === 0) return
+      name.style.fontSize = (containerWidth / textWidth * 100) + 'px'
+    }
+    /* Synchrone eerste meting (voorkomt flash) */
+    fit()
+    /* Herbereken wanneer custom fonts zeker geladen zijn */
+    document.fonts.ready.then(fit)
+    window.addEventListener('resize', fit)
+    return () => window.removeEventListener('resize', fit)
+  }, [])
 
   /* Scroll-animatie: tekst schuift uit beeld na intro */
   useEffect(() => {
@@ -18,7 +43,16 @@ function Hero() {
 
     /* Wacht tot intro-animaties klaar zijn voordat scroll actief wordt */
     let active = false
-    const t = setTimeout(() => { active = true }, 2000)
+    const t = setTimeout(() => {
+      /* CSS animations-laag overschrijft inline styles; verwijder ze zodat
+         de scroll-handler opacity en transform kan sturen */
+      ;[eyebrowRef, nameRef, roleRef].forEach(ref => {
+        if (!ref.current) return
+        ref.current.style.animation = 'none'
+        ref.current.style.opacity   = '1'
+      })
+      active = true
+    }, 2000)
 
     const onScroll = () => {
       if (!active) return
@@ -55,7 +89,7 @@ function Hero() {
           onFramesReady={() => setFramesDone(true)}
           playing={ready}
         />
-        <div className={`hero__content${ready ? ' hero__content--visible' : ''}`}>
+        <div ref={contentRef} className={`hero__content${ready ? ' hero__content--visible' : ''}`}>
           <p ref={eyebrowRef} className="hero__eyebrow">Hey I'am</p>
           <h1 ref={nameRef}   className="hero__name">Rowdy Pelgrim</h1>
           <p ref={roleRef}    className="hero__role">Digital Designer</p>
