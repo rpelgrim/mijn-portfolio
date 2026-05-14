@@ -10,10 +10,94 @@
   height: 100%;
   border-radius: var(--radius-extra-large);
   background-color: var(--color-neutral-lighter);
-  background-size: cover;
-  background-position: center;
   overflow: clip;
+}
+
+/* Tekst-laag onderin de hero */
+.hero__content {
+  position: absolute;
+  left: var(--page-padding);
+  right: var(--page-padding);
+  bottom: 48px;
+  z-index: 1;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+  pointer-events: none;
+}
+
+/* Gradient top 60% → bottom 40% wit op alle tekst */
+.hero__eyebrow,
+.hero__name,
+.hero__role {
+  margin: 0;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.4));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0;
+}
+
+/* Hey I'am */
+.hero__eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--text-large);
+  font-weight: 300;
+  text-align: left;
+  letter-spacing: 0.01em;
+}
+
+/* Rowdy Pelgrim */
+.hero__name {
+  font-family: var(--font-heading);
+  font-size: clamp(3.5rem, 9.5vw, 8.5rem);
+  font-weight: 800;
+  text-align: center;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+
+/* Digital Designer */
+.hero__role {
+  font-family: var(--font-sans);
+  font-size: clamp(1.25rem, 2.5vw, 2rem);
+  font-weight: 400;
+  text-align: right;
+  letter-spacing: 0.01em;
+}
+
+/* ── Intro-animaties ── */
+
+.hero__content--visible .hero__eyebrow {
+  animation: hero-from-left 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+}
+
+.hero__content--visible .hero__name {
+  animation: hero-scale-blur 1.3s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+}
+
+.hero__content--visible .hero__role {
+  animation: hero-from-right 1s cubic-bezier(0.16, 1, 0.3, 1) 0.55s forwards;
+}
+
+@keyframes hero-from-left {
+  from { opacity: 0; transform: translateX(-28px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes hero-scale-blur {
+  from { opacity: 0; transform: scale(1.06); filter: blur(8px); }
+  to   { opacity: 1; transform: scale(1);    filter: blur(0px); }
+}
+
+@keyframes hero-from-right {
+  from { opacity: 0; transform: translateX(28px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Mobiel */
+@media (max-width: 768px) {
+  .hero__content {
+    bottom: 32px;
+  }
 }
