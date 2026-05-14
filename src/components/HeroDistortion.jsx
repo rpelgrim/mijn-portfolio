@@ -141,7 +141,6 @@ function HeroDistortion({ onFramesReady, playing }) {
         canvas.height = canvas.offsetHeight * devicePixelRatio
       }
       setSize()
-      window.addEventListener('resize', setSize)
 
       const drawFrame = (img) => {
         const w = canvas.width, h = canvas.height
@@ -189,6 +188,19 @@ function HeroDistortion({ onFramesReady, playing }) {
       const onScroll = () => showFrame(getFrameIndex())
       window.addEventListener('scroll', onScroll, { passive: true })
 
+      /* Debounce resize: iOS URL-balk triggert resize bij elk scroll-moment.
+         Wacht tot beweging stopt, resize dan de canvas en herteken. */
+      let resizeTimer = null
+      const onResize = () => {
+        clearTimeout(resizeTimer)
+        resizeTimer = setTimeout(() => {
+          setSize()
+          currentIndex = -1
+          showFrame(getFrameIndex())
+        }, 200)
+      }
+      window.addEventListener('resize', onResize)
+
       startFnRef.current = () =>
         playIntro(showFrameBlended, () => showFrame(getFrameIndex()), () => cancelled)
 
@@ -199,8 +211,9 @@ function HeroDistortion({ onFramesReady, playing }) {
 
       return () => {
         cancelled = true
+        clearTimeout(resizeTimer)
         window.removeEventListener('scroll', onScroll)
-        window.removeEventListener('resize', setSize)
+        window.removeEventListener('resize', onResize)
       }
     }
 
