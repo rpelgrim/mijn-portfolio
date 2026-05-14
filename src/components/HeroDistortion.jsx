@@ -51,6 +51,11 @@ const frag = /* glsl */`
 const frameModules = import.meta.glob('../assets/hero-frames/*.jpg', { eager: true })
 const FRAME_URLS = Object.keys(frameModules).sort().map(k => frameModules[k].default)
 
+/* Intro speelt frames 0–19 (frame_0001–frame_0020) automatisch af.
+   Daarna pakt scroll over vanaf index 19 tot het einde. */
+const INTRO_END   = 19   // laatste frame van de intro (0-geïndexeerd)
+const INTRO_FPS   = 24   // afspeelsnelheid intro
+
 function HeroDistortion() {
   const canvasRef = useRef(null)
   const isTouch = window.matchMedia('(pointer: coarse)').matches
@@ -63,10 +68,41 @@ function HeroDistortion() {
       return img
     })
 
+    let introComplete = false
+
+    /* Scroll-index: start pas na intro, mapt scroll naar frames INTRO_END–einde */
     const getFrameIndex = () => {
+      if (!introComplete) return INTRO_END
       const max = document.documentElement.scrollHeight - window.innerHeight
-      if (max <= 0) return 0
-      return Math.round(Math.min(window.scrollY / max, 1) * (images.length - 1))
+      if (max <= 0) return INTRO_END
+      const scrollable = images.length - 1 - INTRO_END
+      return INTRO_END + Math.round(Math.min(window.scrollY / max, 1) * scrollable)
+    }
+
+    /* Intro-animatie: speelt frames 0 t/m INTRO_END af op INTRO_FPS.
+       isCancelled wordt als functie meegegeven zodat de juiste cancelled-flag
+       per pad (touch/desktop) wordt uitgelezen. */
+    const playIntro = (showFrameFn, onDone, isCancelled) => {
+      let frame = 0
+      let lastTime = null
+      const interval = 1000 / INTRO_FPS
+
+      const step = (t) => {
+        if (isCancelled()) return
+        if (lastTime === null) lastTime = t
+        if (t - lastTime >= interval) {
+          showFrameFn(frame)
+          frame++
+          lastTime = t
+          if (frame > INTRO_END) {
+            introComplete = true
+            onDone?.()
+            return
+          }
+        }
+        requestAnimationFrame(step)
+      }
+      requestAnimationFrame(step)
     }
 
     /* Touch: Canvas 2D image sequence */
@@ -74,6 +110,7 @@ function HeroDistortion() {
       const canvas = canvasRef.current
       const ctx = canvas.getContext('2d')
       let currentIndex = -1
+      let cancelled = false
 
       const setSize = () => {
         canvas.width  = canvas.offsetWidth  * devicePixelRatio
@@ -105,11 +142,15 @@ function HeroDistortion() {
         else img.onload = () => drawFrame(img)
       }
 
-      showFrame(0)
       const onScroll = () => showFrame(getFrameIndex())
       window.addEventListener('scroll', onScroll, { passive: true })
 
+      playIntro(showFrame, () => {
+        showFrame(getFrameIndex())
+      }, () => cancelled)
+
       return () => {
+        cancelled = true
         window.removeEventListener('scroll', onScroll)
         window.removeEventListener('resize', setSize)
       }
@@ -149,7 +190,6 @@ function HeroDistortion() {
         if (img.complete) apply()
         else img.onload = apply
       }
-      showFrame(0)
 
       const uniforms = {
         uTex:        { value: texture },
@@ -188,6 +228,10 @@ function HeroDistortion() {
 
       const onScroll = () => showFrame(getFrameIndex())
       window.addEventListener('scroll', onScroll, { passive: true })
+
+      playIntro(showFrame, () => {
+        showFrame(getFrameIndex())
+      }, () => cancelled)
 
       const onMouseMove = (e) => {
         const rect = canvas.getBoundingClientRect()
