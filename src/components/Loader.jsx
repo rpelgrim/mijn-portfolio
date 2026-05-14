@@ -12,6 +12,16 @@ const digitCols = [0, 1, 2, 3].map(pos =>
   years.map(y => String(y).padStart(4, '0')[pos])
 )
 
+/* Leeftijd op basis van geboortedatum — niet visueel zichtbaar */
+const BIRTHDAY = new Date(1989, 9, 19) // 19 oktober 1989
+const ages = years.map(y => {
+  const ref = y === END_YEAR ? new Date() : new Date(y, 11, 31)
+  let age = ref.getFullYear() - BIRTHDAY.getFullYear()
+  const m = ref.getMonth() - BIRTHDAY.getMonth()
+  if (m < 0 || (m === 0 && ref.getDate() < BIRTHDAY.getDate())) age--
+  return Math.max(0, age)
+})
+
 /* Quintic ease-in-out → traag begin, razendsnel midden, zacht einde */
 const easeInOutQuint = t =>
   t < 0.5 ? 16 * t ** 5 : 1 - Math.pow(-2 * t + 2, 5) / 2
@@ -32,7 +42,7 @@ function YearDisplay({ yearIdx }) {
         ))}
       </div>
       <div className="loader__age" aria-hidden="true">
-        {yearIdx} jaar
+        {ages[yearIdx]} jaar
       </div>
     </div>
   )
@@ -85,7 +95,7 @@ function Loader({ visible, onDone }) {
 
       {/* Screenreader-tekst */}
       <span className="loader__sr-year" aria-live="polite">
-        {years[yearIdx]}, {yearIdx} jaar
+        {years[yearIdx]}, {ages[yearIdx]} jaar
       </span>
     </div>
   )
