@@ -18,17 +18,22 @@ const easeInOutQuint = t =>
 
 function YearDisplay({ yearIdx }) {
   return (
-    <div className="loader__year" aria-hidden="true">
-      {digitCols.map((col, pos) => (
-        <div key={pos} className="loader__digit">
-          <div
-            className="loader__digit-col"
-            style={{ transform: `translateY(-${yearIdx}em)` }}
-          >
-            {col.map((d, i) => <span key={i}>{d}</span>)}
+    <div className="loader__content">
+      <div className="loader__year" aria-hidden="true">
+        {digitCols.map((col, pos) => (
+          <div key={pos} className="loader__digit">
+            <div
+              className="loader__digit-col"
+              style={{ transform: `translateY(-${yearIdx}em)` }}
+            >
+              {col.map((d, i) => <span key={i}>{d}</span>)}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
+      <div className="loader__age" aria-hidden="true">
+        {yearIdx} jaar
+      </div>
     </div>
   )
 }
@@ -78,9 +83,9 @@ function Loader({ visible, onDone }) {
         <YearDisplay yearIdx={yearIdx} />
       </div>
 
-      {/* Visueel leesbaar jaar voor screenreaders */}
+      {/* Screenreader-tekst */}
       <span className="loader__sr-year" aria-live="polite">
-        {years[yearIdx]}
+        {years[yearIdx]}, {yearIdx} jaar
       </span>
     </div>
   )
