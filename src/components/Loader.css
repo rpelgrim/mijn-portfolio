@@ -1,16 +1,7 @@
-@keyframes loader-breathe {
-  0%, 100% { opacity: 0.35; }
-  50%       { opacity: 1; }
-}
-
 .loader {
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background-color: var(--color-background);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   opacity: 1;
   transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -20,13 +11,68 @@
   pointer-events: none;
 }
 
-.loader__logo {
-  width: 48px;
-  height: 48px;
-  object-fit: contain;
-  animation: loader-breathe 2s ease-in-out infinite;
+/* Beide lagen vullen de volledige viewport */
+.loader__layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-[data-theme="dark"] .loader__logo {
-  filter: invert(1);
+.loader__layer--light {
+  background-color: var(--color-background);
+}
+
+.loader__layer--accent {
+  background-color: var(--color-accent);
+}
+
+/* Jaartal-teller */
+.loader__year {
+  display: flex;
+  font-family: var(--font-heading);
+  font-size: clamp(5rem, 14vw, 11rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  user-select: none;
+}
+
+.loader__layer--light .loader__year {
+  color: var(--color-text);
+}
+
+.loader__layer--accent .loader__year {
+  color: #ffffff;
+}
+
+/* Elk cijfer als een apart venster (overflow hidden = fruitmachine-effect) */
+.loader__digit {
+  height: 1em;
+  overflow: hidden;
+}
+
+/* De scrollende kolom van cijfers */
+.loader__digit-col {
+  display: flex;
+  flex-direction: column;
+  /* will-change: transform → GPU-compositing voor vloeiende animatie */
+  will-change: transform;
+}
+
+.loader__digit-col span {
+  display: block;
+  height: 1em;
+  line-height: 1;
+}
+
+/* Alleen leesbaar voor screenreaders */
+.loader__sr-year {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }

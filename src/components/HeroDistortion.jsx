@@ -54,12 +54,24 @@ const frag = /* glsl */`
 const frameModules = import.meta.glob('../assets/hero-frames/*.jpg', { eager: true })
 const FRAME_URLS = Object.keys(frameModules).sort().map(k => frameModules[k].default)
 
-const INTRO_END      = 19    // frames 0–19 (frame_0001–frame_0020)
-const INTRO_DURATION = 2000  // ms
+const INTRO_END      = 19
+const INTRO_DURATION = 2000
 
-function HeroDistortion({ onReady }) {
-  const canvasRef = useRef(null)
+function HeroDistortion({ onFramesReady, playing }) {
+  const canvasRef    = useRef(null)
+  const playingRef   = useRef(playing)
+  const startFnRef   = useRef(null)
+  const framesReady  = useRef(false)
   const isTouch = window.matchMedia('(pointer: coarse)').matches
+
+  /* Wanneer playing true wordt: start intro als alles klaar is */
+  useEffect(() => {
+    playingRef.current = playing
+    if (playing && framesReady.current && startFnRef.current) {
+      startFnRef.current()
+      startFnRef.current = null
+    }
+  }, [playing])
 
   useEffect(() => {
     const images = FRAME_URLS.map(url => {
@@ -80,9 +92,9 @@ function HeroDistortion({ onReady }) {
 
     const playIntro = (showBlendedFn, onDone, isCancelled) => {
       let startTime = null
-      const ease = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+      const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
 
-      const step = (t) => {
+      const step = t => {
         if (isCancelled()) return
         if (startTime === null) startTime = t
         const progress = Math.min((t - startTime) / INTRO_DURATION, 1)
@@ -97,16 +109,14 @@ function HeroDistortion({ onReady }) {
       requestAnimationFrame(step)
     }
 
-    /* Wacht tot frames 0–INTRO_END geladen zijn, roep dan startFn aan.
-       setupReady en framesReady kunnen in willekeurige volgorde binnenkomen. */
-    let framesReady = false
-    let setupReady  = false
-    let startFn     = null
-
-    const maybeStart = () => {
-      if (!framesReady || !setupReady) return
-      onReady?.()
-      startFn()
+    /* Wacht tot frames 0–INTRO_END geladen zijn; start daarna als playing=true */
+    const onIntroFramesLoaded = () => {
+      framesReady.current = true
+      onFramesReady?.()
+      if (playingRef.current && startFnRef.current) {
+        startFnRef.current()
+        startFnRef.current = null
+      }
     }
 
     const introFrames = images.slice(0, INTRO_END + 1)
@@ -114,10 +124,7 @@ function HeroDistortion({ onReady }) {
     introFrames.forEach(img => {
       const check = () => {
         loadedCount++
-        if (loadedCount === introFrames.length) {
-          framesReady = true
-          maybeStart()
-        }
+        if (loadedCount === introFrames.length) onIntroFramesLoaded()
       }
       if (img.complete) check()
       else img.addEventListener('load', check, { once: true })
@@ -182,9 +189,13 @@ function HeroDistortion({ onReady }) {
       const onScroll = () => showFrame(getFrameIndex())
       window.addEventListener('scroll', onScroll, { passive: true })
 
-      startFn  = () => playIntro(showFrameBlended, () => showFrame(getFrameIndex()), () => cancelled)
-      setupReady = true
-      maybeStart()
+      startFnRef.current = () =>
+        playIntro(showFrameBlended, () => showFrame(getFrameIndex()), () => cancelled)
+
+      if (framesReady.current && playingRef.current) {
+        startFnRef.current()
+        startFnRef.current = null
+      }
 
       return () => {
         cancelled = true
@@ -226,10 +237,8 @@ function HeroDistortion({ onReady }) {
         const img = images[index]
         const apply = () => {
           imageSize.set(img.naturalWidth, img.naturalHeight)
-          texA.image = img
-          texA.needsUpdate = true
-          texB.image = img
-          texB.needsUpdate = true
+          texA.image = img; texA.needsUpdate = true
+          texB.image = img; texB.needsUpdate = true
           uniforms.uBlend.value = 0
         }
         if (img.complete) apply(); else img.onload = apply
@@ -239,15 +248,12 @@ function HeroDistortion({ onReady }) {
       const showFrameBlended = (floatIndex) => {
         const iA = Math.floor(floatIndex)
         const iB = Math.min(iA + 1, images.length - 1)
-        const blend = floatIndex - iA
-
         if (iA !== lastFloor) {
           lastFloor = iA
           const img = images[iA]
           const apply = () => {
             imageSize.set(img.naturalWidth, img.naturalHeight)
-            texA.image = img
-            texA.needsUpdate = true
+            texA.image = img; texA.needsUpdate = true
           }
           if (img.complete) apply(); else img.onload = apply
         }
@@ -257,7 +263,7 @@ function HeroDistortion({ onReady }) {
           const apply = () => { texB.image = img; texB.needsUpdate = true }
           if (img.complete) apply(); else img.onload = apply
         }
-        uniforms.uBlend.value = blend
+        uniforms.uBlend.value = floatIndex - iA
       }
 
       const uniforms = {
@@ -286,7 +292,7 @@ function HeroDistortion({ onReady }) {
       const targetMouse = new THREE.Vector2(0.5, 0.5)
       let rafId = null, idleTimer = null
 
-      const tick = (t) => {
+      const tick = t => {
         if (cancelled) return
         uniforms.uTime.value     = t * 0.001
         currentStrength         += (targetStrength - currentStrength) * 0.05
@@ -300,11 +306,15 @@ function HeroDistortion({ onReady }) {
       const onScroll = () => showFrame(getFrameIndex())
       window.addEventListener('scroll', onScroll, { passive: true })
 
-      startFn    = () => playIntro(showFrameBlended, () => showFrame(getFrameIndex()), () => cancelled)
-      setupReady = true
-      maybeStart()
+      startFnRef.current = () =>
+        playIntro(showFrameBlended, () => showFrame(getFrameIndex()), () => cancelled)
 
-      const onMouseMove = (e) => {
+      if (framesReady.current && playingRef.current) {
+        startFnRef.current()
+        startFnRef.current = null
+      }
+
+      const onMouseMove = e => {
         const rect = canvas.getBoundingClientRect()
         targetMouse.set(
           (e.clientX - rect.left) / rect.width,
@@ -322,11 +332,8 @@ function HeroDistortion({ onReady }) {
         canvas.parentElement?.removeEventListener('mousemove', onMouseMove)
         clearTimeout(idleTimer)
         if (rafId) cancelAnimationFrame(rafId)
-        texA.dispose()
-        texB.dispose()
-        renderer.dispose()
-        mat.dispose()
-        geo.dispose()
+        texA.dispose(); texB.dispose()
+        renderer.dispose(); mat.dispose(); geo.dispose()
       }
     })
 

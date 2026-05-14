@@ -16,8 +16,12 @@ function MarqueeCopy() {
 }
 
 function Hero() {
-  const trackRef = useRef(null)
-  const [ready, setReady] = useState(false)
+  const trackRef     = useRef(null)
+  const [framesDone, setFramesDone] = useState(false)
+  const [loaderDone, setLoaderDone] = useState(false)
+
+  /* Intro en loader mogen pas starten als beide klaar zijn */
+  const ready = framesDone && loaderDone
 
   useEffect(() => {
     const track = trackRef.current
@@ -52,9 +56,15 @@ function Hero() {
 
   return (
     <section className="hero">
-      <Loader visible={!ready} />
+      <Loader
+        visible={!ready}
+        onDone={() => setLoaderDone(true)}
+      />
       <div className="hero__bg">
-        <HeroDistortion onReady={() => setReady(true)} />
+        <HeroDistortion
+          onFramesReady={() => setFramesDone(true)}
+          playing={ready}
+        />
         <div className="hero__content">
           <h1 className="hero__name">
             <div ref={trackRef} className="hero__marquee-track">
