@@ -152,7 +152,7 @@ function HeroDistortion({ onFramesReady, playing }) {
           sx = 0;                 sy = (img.naturalHeight - sh) / 2
         } else {
           sh = img.naturalHeight; sw = sh * cAspect
-          sx = (img.naturalWidth - sw) / 2; sy = 0
+          sx = (img.naturalWidth - sw) * 0.7; sy = 0
         }
         ctx.drawImage(img, sx, sy, sw, sh, 0, 0, w, h)
       }
