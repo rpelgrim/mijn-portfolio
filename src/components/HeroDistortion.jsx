@@ -53,8 +53,8 @@ const FRAME_URLS = Object.keys(frameModules).sort().map(k => frameModules[k].def
 
 /* Intro speelt frames 0–19 (frame_0001–frame_0020) automatisch af.
    Daarna pakt scroll over vanaf index 19 tot het einde. */
-const INTRO_END   = 19   // laatste frame van de intro (0-geïndexeerd)
-const INTRO_FPS   = 24   // afspeelsnelheid intro
+const INTRO_END      = 19    // laatste frame van de intro (0-geïndexeerd)
+const INTRO_DURATION = 2000  // totale introduur in ms
 
 function HeroDistortion() {
   const canvasRef = useRef(null)
@@ -79,26 +79,27 @@ function HeroDistortion() {
       return INTRO_END + Math.round(Math.min(window.scrollY / max, 1) * scrollable)
     }
 
-    /* Intro-animatie: speelt frames 0 t/m INTRO_END af op INTRO_FPS.
-       isCancelled wordt als functie meegegeven zodat de juiste cancelled-flag
-       per pad (touch/desktop) wordt uitgelezen. */
+    /* Intro-animatie: speelt frames 0–INTRO_END af binnen INTRO_DURATION ms.
+       Ease-in-out cubic zorgt voor een zachte op- en afloop.
+       isCancelled wordt als functie meegegeven per pad (touch/desktop). */
     const playIntro = (showFrameFn, onDone, isCancelled) => {
-      let frame = 0
-      let lastTime = null
-      const interval = 1000 / INTRO_FPS
+      let startTime = null
+
+      const easeInOut = (t) =>
+        t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
 
       const step = (t) => {
         if (isCancelled()) return
-        if (lastTime === null) lastTime = t
-        if (t - lastTime >= interval) {
-          showFrameFn(frame)
-          frame++
-          lastTime = t
-          if (frame > INTRO_END) {
-            introComplete = true
-            onDone?.()
-            return
-          }
+        if (startTime === null) startTime = t
+
+        const progress = Math.min((t - startTime) / INTRO_DURATION, 1)
+        const frameIndex = Math.round(easeInOut(progress) * INTRO_END)
+        showFrameFn(frameIndex)
+
+        if (progress >= 1) {
+          introComplete = true
+          onDone?.()
+          return
         }
         requestAnimationFrame(step)
       }
