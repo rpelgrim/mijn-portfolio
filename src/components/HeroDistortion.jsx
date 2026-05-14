@@ -8,10 +8,13 @@ const vert = /* glsl */`
   }
 `
 
+/* Twee texturen + blend voor vloeiende cross-fade tussen frames */
 const frag = /* glsl */`
   precision mediump float;
 
-  uniform sampler2D uTex;
+  uniform sampler2D uTexA;
+  uniform sampler2D uTexB;
+  uniform float     uBlend;
   uniform vec2      uMouse;
   uniform float     uStrength;
   uniform float     uTime;
@@ -42,26 +45,24 @@ const frag = /* glsl */`
     vec2 dir    = normalize(vUv - uMouse + vec2(0.0001));
     vec2 offset = dir * ripple * 0.025;
 
-    vec4 color = texture2D(uTex, coverUv(vUv + offset));
-    gl_FragColor = color;
+    vec2 uv     = coverUv(vUv + offset);
+    vec4 colorA = texture2D(uTexA, uv);
+    vec4 colorB = texture2D(uTexB, uv);
+    gl_FragColor = mix(colorA, colorB, uBlend);
   }
 `
 
-/* Alle frames als gesorteerde URL-array via Vite glob */
 const frameModules = import.meta.glob('../assets/hero-frames/*.jpg', { eager: true })
 const FRAME_URLS = Object.keys(frameModules).sort().map(k => frameModules[k].default)
 
-/* Intro speelt frames 0–19 (frame_0001–frame_0020) automatisch af.
-   Daarna pakt scroll over vanaf index 19 tot het einde. */
-const INTRO_END      = 19    // laatste frame van de intro (0-geïndexeerd)
-const INTRO_DURATION = 2000  // totale introduur in ms
+const INTRO_END      = 19    // frames 0–19 (frame_0001–frame_0020)
+const INTRO_DURATION = 2000  // ms
 
 function HeroDistortion() {
   const canvasRef = useRef(null)
   const isTouch = window.matchMedia('(pointer: coarse)').matches
 
   useEffect(() => {
-    /* Preload alle frames */
     const images = FRAME_URLS.map(url => {
       const img = new Image()
       img.src = url
@@ -70,7 +71,6 @@ function HeroDistortion() {
 
     let introComplete = false
 
-    /* Scroll-index: start pas na intro, mapt scroll naar frames INTRO_END–einde */
     const getFrameIndex = () => {
       if (!introComplete) return INTRO_END
       const max = document.documentElement.scrollHeight - window.innerHeight
@@ -79,23 +79,17 @@ function HeroDistortion() {
       return INTRO_END + Math.round(Math.min(window.scrollY / max, 1) * scrollable)
     }
 
-    /* Intro-animatie: speelt frames 0–INTRO_END af binnen INTRO_DURATION ms.
-       Ease-in-out cubic zorgt voor een zachte op- en afloop.
-       isCancelled wordt als functie meegegeven per pad (touch/desktop). */
-    const playIntro = (showFrameFn, onDone, isCancelled) => {
+    /* Intro speelt een float-index af zodat de caller kan cross-faden
+       tussen aangrenzende frames in plaats van hard te springen. */
+    const playIntro = (showBlendedFn, onDone, isCancelled) => {
       let startTime = null
-
-      const easeInOut = (t) =>
-        t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+      const ease = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
 
       const step = (t) => {
         if (isCancelled()) return
         if (startTime === null) startTime = t
-
         const progress = Math.min((t - startTime) / INTRO_DURATION, 1)
-        const frameIndex = Math.round(easeInOut(progress) * INTRO_END)
-        showFrameFn(frameIndex)
-
+        showBlendedFn(ease(progress) * INTRO_END)
         if (progress >= 1) {
           introComplete = true
           onDone?.()
@@ -106,11 +100,10 @@ function HeroDistortion() {
       requestAnimationFrame(step)
     }
 
-    /* Touch: Canvas 2D image sequence */
+    /* ── Touch: Canvas 2D ── */
     if (isTouch) {
       const canvas = canvasRef.current
       const ctx = canvas.getContext('2d')
-      let currentIndex = -1
       let cancelled = false
 
       const setSize = () => {
@@ -135,6 +128,7 @@ function HeroDistortion() {
         ctx.drawImage(img, sx, sy, sw, sh, 0, 0, w, h)
       }
 
+      let currentIndex = -1
       const showFrame = (index) => {
         if (index === currentIndex) return
         currentIndex = index
@@ -143,12 +137,30 @@ function HeroDistortion() {
         else img.onload = () => drawFrame(img)
       }
 
+      /* Cross-fade via globalAlpha tussen twee aangrenzende frames */
+      const showFrameBlended = (floatIndex) => {
+        const iA = Math.floor(floatIndex)
+        const iB = Math.min(iA + 1, images.length - 1)
+        const blend = floatIndex - iA
+        const imgA = images[iA]
+        const imgB = images[iB]
+        const draw = () => {
+          if (!imgA.complete) return
+          drawFrame(imgA)
+          if (blend > 0.01 && imgB.complete) {
+            ctx.save()
+            ctx.globalAlpha = blend
+            drawFrame(imgB)
+            ctx.restore()
+          }
+        }
+        imgA.complete && imgB.complete ? draw() : (imgA.onload = imgB.onload = draw)
+      }
+
       const onScroll = () => showFrame(getFrameIndex())
       window.addEventListener('scroll', onScroll, { passive: true })
 
-      playIntro(showFrame, () => {
-        showFrame(getFrameIndex())
-      }, () => cancelled)
+      playIntro(showFrameBlended, () => showFrame(getFrameIndex()), () => cancelled)
 
       return () => {
         cancelled = true
@@ -157,7 +169,7 @@ function HeroDistortion() {
       }
     }
 
-    /* Desktop: Three.js shader met image sequence */
+    /* ── Desktop: Three.js shader ── */
     const canvas = canvasRef.current
     let cancelled = false
     let dispose   = null
@@ -174,10 +186,16 @@ function HeroDistortion() {
       const resolution = new THREE.Vector2()
       const imageSize  = new THREE.Vector2(1920, 1080)
 
-      const texture = new THREE.Texture()
-      texture.minFilter = THREE.LinearFilter
-      texture.magFilter = THREE.LinearFilter
+      const makeTexture = () => {
+        const t = new THREE.Texture()
+        t.minFilter = THREE.LinearFilter
+        t.magFilter = THREE.LinearFilter
+        return t
+      }
+      const texA = makeTexture()
+      const texB = makeTexture()
 
+      /* Scroll: enkel texA gebruiken, blend op 0 */
       let currentIndex = -1
       const showFrame = (index) => {
         if (index === currentIndex) return
@@ -185,15 +203,45 @@ function HeroDistortion() {
         const img = images[index]
         const apply = () => {
           imageSize.set(img.naturalWidth, img.naturalHeight)
-          texture.image = img
-          texture.needsUpdate = true
+          texA.image = img
+          texA.needsUpdate = true
+          texB.image = img
+          texB.needsUpdate = true
+          uniforms.uBlend.value = 0
         }
-        if (img.complete) apply()
-        else img.onload = apply
+        if (img.complete) apply(); else img.onload = apply
+      }
+
+      /* Intro: blend tussen vloer- en plafondframe op basis van float-index */
+      let lastFloor = -1, lastCeil = -1
+      const showFrameBlended = (floatIndex) => {
+        const iA = Math.floor(floatIndex)
+        const iB = Math.min(iA + 1, images.length - 1)
+        const blend = floatIndex - iA
+
+        if (iA !== lastFloor) {
+          lastFloor = iA
+          const img = images[iA]
+          const apply = () => {
+            imageSize.set(img.naturalWidth, img.naturalHeight)
+            texA.image = img
+            texA.needsUpdate = true
+          }
+          if (img.complete) apply(); else img.onload = apply
+        }
+        if (iB !== lastCeil) {
+          lastCeil = iB
+          const img = images[iB]
+          const apply = () => { texB.image = img; texB.needsUpdate = true }
+          if (img.complete) apply(); else img.onload = apply
+        }
+        uniforms.uBlend.value = blend
       }
 
       const uniforms = {
-        uTex:        { value: texture },
+        uTexA:       { value: texA },
+        uTexB:       { value: texB },
+        uBlend:      { value: 0 },
         uMouse:      { value: new THREE.Vector2(0.5, 0.5) },
         uStrength:   { value: 0 },
         uTime:       { value: 0 },
@@ -230,9 +278,7 @@ function HeroDistortion() {
       const onScroll = () => showFrame(getFrameIndex())
       window.addEventListener('scroll', onScroll, { passive: true })
 
-      playIntro(showFrame, () => {
-        showFrame(getFrameIndex())
-      }, () => cancelled)
+      playIntro(showFrameBlended, () => showFrame(getFrameIndex()), () => cancelled)
 
       const onMouseMove = (e) => {
         const rect = canvas.getBoundingClientRect()
@@ -252,7 +298,8 @@ function HeroDistortion() {
         canvas.parentElement?.removeEventListener('mousemove', onMouseMove)
         clearTimeout(idleTimer)
         if (rafId) cancelAnimationFrame(rafId)
-        texture.dispose()
+        texA.dispose()
+        texB.dispose()
         renderer.dispose()
         mat.dispose()
         geo.dispose()
