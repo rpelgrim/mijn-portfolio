@@ -8,7 +8,6 @@ const vert = /* glsl */`
   }
 `
 
-/* Twee texturen + blend voor vloeiende cross-fade tussen frames */
 const frag = /* glsl */`
   precision mediump float;
 
@@ -58,7 +57,7 @@ const FRAME_URLS = Object.keys(frameModules).sort().map(k => frameModules[k].def
 const INTRO_END      = 19    // frames 0–19 (frame_0001–frame_0020)
 const INTRO_DURATION = 2000  // ms
 
-function HeroDistortion() {
+function HeroDistortion({ onReady }) {
   const canvasRef = useRef(null)
   const isTouch = window.matchMedia('(pointer: coarse)').matches
 
@@ -79,8 +78,6 @@ function HeroDistortion() {
       return INTRO_END + Math.round(Math.min(window.scrollY / max, 1) * scrollable)
     }
 
-    /* Intro speelt een float-index af zodat de caller kan cross-faden
-       tussen aangrenzende frames in plaats van hard te springen. */
     const playIntro = (showBlendedFn, onDone, isCancelled) => {
       let startTime = null
       const ease = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
@@ -99,6 +96,32 @@ function HeroDistortion() {
       }
       requestAnimationFrame(step)
     }
+
+    /* Wacht tot frames 0–INTRO_END geladen zijn, roep dan startFn aan.
+       setupReady en framesReady kunnen in willekeurige volgorde binnenkomen. */
+    let framesReady = false
+    let setupReady  = false
+    let startFn     = null
+
+    const maybeStart = () => {
+      if (!framesReady || !setupReady) return
+      onReady?.()
+      startFn()
+    }
+
+    const introFrames = images.slice(0, INTRO_END + 1)
+    let loadedCount = 0
+    introFrames.forEach(img => {
+      const check = () => {
+        loadedCount++
+        if (loadedCount === introFrames.length) {
+          framesReady = true
+          maybeStart()
+        }
+      }
+      if (img.complete) check()
+      else img.addEventListener('load', check, { once: true })
+    })
 
     /* ── Touch: Canvas 2D ── */
     if (isTouch) {
@@ -137,7 +160,6 @@ function HeroDistortion() {
         else img.onload = () => drawFrame(img)
       }
 
-      /* Cross-fade via globalAlpha tussen twee aangrenzende frames */
       const showFrameBlended = (floatIndex) => {
         const iA = Math.floor(floatIndex)
         const iB = Math.min(iA + 1, images.length - 1)
@@ -160,7 +182,9 @@ function HeroDistortion() {
       const onScroll = () => showFrame(getFrameIndex())
       window.addEventListener('scroll', onScroll, { passive: true })
 
-      playIntro(showFrameBlended, () => showFrame(getFrameIndex()), () => cancelled)
+      startFn  = () => playIntro(showFrameBlended, () => showFrame(getFrameIndex()), () => cancelled)
+      setupReady = true
+      maybeStart()
 
       return () => {
         cancelled = true
@@ -195,7 +219,6 @@ function HeroDistortion() {
       const texA = makeTexture()
       const texB = makeTexture()
 
-      /* Scroll: enkel texA gebruiken, blend op 0 */
       let currentIndex = -1
       const showFrame = (index) => {
         if (index === currentIndex) return
@@ -212,7 +235,6 @@ function HeroDistortion() {
         if (img.complete) apply(); else img.onload = apply
       }
 
-      /* Intro: blend tussen vloer- en plafondframe op basis van float-index */
       let lastFloor = -1, lastCeil = -1
       const showFrameBlended = (floatIndex) => {
         const iA = Math.floor(floatIndex)
@@ -278,7 +300,9 @@ function HeroDistortion() {
       const onScroll = () => showFrame(getFrameIndex())
       window.addEventListener('scroll', onScroll, { passive: true })
 
-      playIntro(showFrameBlended, () => showFrame(getFrameIndex()), () => cancelled)
+      startFn    = () => playIntro(showFrameBlended, () => showFrame(getFrameIndex()), () => cancelled)
+      setupReady = true
+      maybeStart()
 
       const onMouseMove = (e) => {
         const rect = canvas.getBoundingClientRect()

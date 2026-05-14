@@ -1,5 +1,6 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import HeroDistortion from './HeroDistortion'
+import Loader from './Loader'
 import './Hero.css'
 
 const TOKENS = ['Digital', 'Designer', '•', 'Rowdy', 'Pelgrim', '•']
@@ -16,6 +17,7 @@ function MarqueeCopy() {
 
 function Hero() {
   const trackRef = useRef(null)
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
     const track = trackRef.current
@@ -24,7 +26,6 @@ function Hero() {
     let offset = 0
     let rafId
 
-    /* Initieel gecentreerd inladen in kopie 2 (middelste) */
     const center = () => {
       const cw = track.offsetWidth / 3
       offset = cw + Math.max(0, (cw - window.innerWidth) / 2)
@@ -35,16 +36,12 @@ function Hero() {
 
     const tick = () => {
       const cw = track.offsetWidth / 3
-
       offset -= 0.5
-
       if (offset < cw) offset += cw
       if (offset >= 2 * cw) offset -= cw
-
       track.style.transform = `translateX(${-offset}px)`
       rafId = requestAnimationFrame(tick)
     }
-
     rafId = requestAnimationFrame(tick)
 
     return () => {
@@ -55,10 +52,9 @@ function Hero() {
 
   return (
     <section className="hero">
+      <Loader visible={!ready} />
       <div className="hero__bg">
-        {/* Three.js achtergrond met pixel distortion op hover heading */}
-        <HeroDistortion />
-
+        <HeroDistortion onReady={() => setReady(true)} />
         <div className="hero__content">
           <h1 className="hero__name">
             <div ref={trackRef} className="hero__marquee-track">

@@ -1,0 +1,32 @@
+@keyframes loader-breathe {
+  0%, 100% { opacity: 0.35; }
+  50%       { opacity: 1; }
+}
+
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: var(--color-background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.loader--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loader__logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  animation: loader-breathe 2s ease-in-out infinite;
+}
+
+[data-theme="dark"] .loader__logo {
+  filter: invert(1);
+}
