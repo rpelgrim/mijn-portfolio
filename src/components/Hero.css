@@ -52,9 +52,10 @@
   font-family: var(--font-heading);
   font-size: clamp(3.5rem, 9.5vw, 8.5rem);
   font-weight: 800;
-  text-align: center;
+  text-align: left;
   line-height: 0.95;
   letter-spacing: -0.02em;
+  font-weight: 500;
 }
 
 /* Digital Designer */
