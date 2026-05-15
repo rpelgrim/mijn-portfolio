@@ -72,7 +72,7 @@ function Navbar() {
           </div>
           <button
             className="navbar__menu"
-            aria-label={open ? 'Menu sluiten' : 'Menu openen'}
+            aria-label={open ? 'Close menu' : 'Open menu'}
             onClick={() => setOpen(!open)}
           >
             <span className={`material-symbols-outlined navbar__menu-icon${open ? ' navbar__menu-icon--open' : ''}`}>
@@ -88,7 +88,7 @@ function Navbar() {
           <button
             className="navbar__theme-btn"
             onClick={() => setDark(!dark)}
-            aria-label="Thema wisselen"
+            aria-label="Toggle theme"
           >
             <span className="material-symbols-outlined">
               {dark ? 'light_mode' : 'dark_mode'}

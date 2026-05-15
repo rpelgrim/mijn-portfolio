@@ -4,27 +4,27 @@ import './ContactForm.css'
 
 const STEPS = [
   {
-    message: 'Hey! Leuk dat je contact opneemt. Wat is je voornaam?',
+    message: "Hey! Great that you're reaching out. What's your first name?",
     field: 'firstName',
-    label: 'Voornaam*',
+    label: 'First name*',
     type: 'text',
   },
   {
-    message: 'Fijn om je te leren kennen! En je achternaam?',
+    message: 'Nice to meet you! And your last name?',
     field: 'lastName',
-    label: 'Achternaam*',
+    label: 'Last name*',
     type: 'text',
   },
   {
-    message: 'Super! Op welk e-mailadres kan ik je bereiken?',
+    message: 'Great! What email address can I reach you at?',
     field: 'email',
-    label: 'E-mailadres*',
+    label: 'Email address*',
     type: 'email',
   },
   {
-    message: 'Bijna klaar! Vertel me waar je mee aan de slag wil.',
+    message: "Almost done! Tell me what you'd like to work on.",
     field: 'message',
-    label: 'Bericht*',
+    label: 'Message*',
     type: 'textarea',
   },
 ]
@@ -46,9 +46,9 @@ function ContactForm() {
   const handleNext = () => {
     if (!hasValue) return
     if (isLast) {
-      const subject = encodeURIComponent(`Contactverzoek van ${values.firstName} ${values.lastName}`)
+      const subject = encodeURIComponent(`Contact request from ${values.firstName} ${values.lastName}`)
       const body = encodeURIComponent(
-        `Naam: ${values.firstName} ${values.lastName}\nE-mail: ${values.email}\n\n${values.message}`
+        `Name: ${values.firstName} ${values.lastName}\nEmail: ${values.email}\n\n${values.message}`
       )
       window.location.href = `mailto:rowdypelgrim@gmail.com?subject=${subject}&body=${body}`
       setSubmitted(true)
@@ -62,7 +62,7 @@ function ContactForm() {
   }
 
   const bubbleMessage = submitted
-    ? 'Bedankt voor je bericht! Ik neem zo snel mogelijk contact met je op.'
+    ? "Thank you for your message! I'll get back to you as soon as possible."
     : current?.message.replace('{firstName}', values.firstName || '')
 
   return (
@@ -115,7 +115,7 @@ function ContactForm() {
                 <button
                   className="contact-form__back"
                   onClick={() => setStep(s => s - 1)}
-                  aria-label="Vorige stap"
+                  aria-label="Previous step"
                 >
                   <span className="material-symbols-outlined">arrow_back</span>
                 </button>
@@ -124,7 +124,7 @@ function ContactForm() {
                 className="contact-form__next"
                 onClick={handleNext}
                 disabled={!hasValue}
-                aria-label={isLast ? 'Versturen' : 'Volgende'}
+                aria-label={isLast ? 'Send' : 'Next'}
               >
                 <span className="material-symbols-outlined">
                   {isLast ? 'send' : 'arrow_forward'}

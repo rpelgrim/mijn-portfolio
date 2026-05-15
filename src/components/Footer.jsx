@@ -8,8 +8,8 @@ function Footer() {
         <div className="footer__top">
           <div className="footer__left">
             <div className="footer__intro">
-              <h2 className="footer__heading">Laten we samen<br />iets moois maken</h2>
-              <p className="footer__desc">Beschikbaar voor nieuwe projecten en samenwerkingen. Stuur een bericht en ik reageer zo snel mogelijk.</p>
+              <h2 className="footer__heading">Let's create something<br />beautiful together</h2>
+              <p className="footer__desc">Available for new projects and collaborations. Send a message and I'll get back to you as soon as possible.</p>
             </div>
             <ContactForm />
           </div>

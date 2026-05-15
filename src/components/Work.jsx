@@ -4,11 +4,11 @@ import './Work.css'
 const projects = [
   {
     id: 1,
-    title: 'Vorm & Verhaal',
+    title: 'Form & Story',
     category: 'Branding',
     year: '2024',
     image: 'https://picsum.photos/seed/11/1200/900',
-    description: 'Een complete merkidentiteit voor een onafhankelijk uitgeverijhuis. Van logotype tot typografisch systeem — alles ademde het gevoel van zorgvuldig vakmanschap. Het resultaat: een visuele taal die even tijdloos als onderscheidend is.',
+    description: 'A complete brand identity for an independent publishing house. From logotype to typographic system — everything breathed the feeling of careful craftsmanship. The result: a visual language as timeless as it is distinctive.',
     link: '#',
   },
   {
@@ -17,34 +17,34 @@ const projects = [
     category: 'UI Design',
     year: '2024',
     image: 'https://picsum.photos/seed/42/1200/900',
-    description: 'Digitaal platform voor een architectuurstudio met een sterke focus op witruimte en hiërarchie. De interface begeleidt bezoekers rustig door een uitgebreid portfolio zonder hen te overweldigen. Elk scherm is een compositie op zichzelf.',
+    description: 'Digital platform for an architecture studio with a strong focus on white space and hierarchy. The interface guides visitors calmly through an extensive portfolio without overwhelming them. Every screen is a composition in itself.',
     link: '#',
   },
   {
     id: 3,
-    title: 'Beweging als Taal',
+    title: 'Movement as Language',
     category: 'Motion',
     year: '2023',
     image: 'https://picsum.photos/seed/73/1200/900',
-    description: 'Een reeks animaties voor het rebrand-traject van een Amsterdams cultureel centrum. Beweging werd ingezet als drager van de nieuwe merkpersoonlijkheid. Subtiel, intentioneel en altijd in dienst van het verhaal.',
+    description: 'A series of animations for the rebrand of an Amsterdam cultural centre. Movement was used as a carrier of the new brand personality. Subtle, intentional and always in service of the story.',
     link: '#',
   },
   {
     id: 4,
-    title: 'Grond & Groei',
+    title: 'Ground & Growth',
     category: 'Web Design',
     year: '2023',
     image: 'https://picsum.photos/seed/58/1200/900',
-    description: 'Website voor een duurzaam landbouwcollectief dat transparantie centraal stelt. De site verbindt consumenten rechtstreeks met de boeren achter hun voedsel. Warm, eerlijk en functioneel — net als het product zelf.',
+    description: 'Website for a sustainable farming collective that puts transparency at its core. The site connects consumers directly to the farmers behind their food. Warm, honest and functional — just like the product itself.',
     link: '#',
   },
   {
     id: 5,
-    title: 'Licht & Lijn',
+    title: 'Light & Line',
     category: 'Art Direction',
     year: '2022',
     image: 'https://picsum.photos/seed/97/1200/900',
-    description: 'Art direction voor een fotografie-expositie over stedelijke architectuur. De visuele presentatie sloot naadloos aan op het thema: strak, gelaagd en met een scherp oog voor detail. Van poster tot catalogus, alles klopte.',
+    description: 'Art direction for a photography exhibition on urban architecture. The visual presentation seamlessly matched the theme: sharp, layered and with a keen eye for detail. From poster to catalogue, everything aligned.',
     link: '#',
   },
 ]
@@ -140,7 +140,7 @@ function Work() {
                 <div key={project.id} className="work__info">
                   <h3 className="work__title">{project.title}</h3>
                   <p className="work__desc">{project.description}</p>
-                  <a href={project.link} className="work__link">Bekijk project</a>
+                  <a href={project.link} className="work__link">View project</a>
                 </div>
               ))}
             </div>
@@ -162,7 +162,7 @@ function Work() {
             <div className="work-mobile__info">
               <h3 className="work__title">{project.title}</h3>
               <p className="work__desc">{project.description}</p>
-              <a href={project.link} className="work__link">Bekijk project</a>
+              <a href={project.link} className="work__link">View project</a>
             </div>
           </article>
         ))}

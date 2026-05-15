@@ -8,10 +8,28 @@ function Hero() {
   const [loaderDone, setLoaderDone] = useState(false)
   const ready = framesDone && loaderDone
 
+  const heroRef    = useRef(null)
+  const bgRef      = useRef(null)
   const contentRef = useRef(null)
   const eyebrowRef = useRef(null)
   const nameRef    = useRef(null)
   const roleRef    = useRef(null)
+
+  /* clip-path animeren op scroll: visueel inset zonder canvas-resize */
+  useEffect(() => {
+    const bg = bgRef.current
+    if (!bg) return
+
+    const onScroll = () => {
+      const p      = Math.max(0, Math.min(1, window.scrollY / 200))
+      const inset  = 16 * (1 - p)
+      const radius = 32 * (1 - p)
+      bg.style.clipPath = `inset(${inset}px round ${radius}px)`
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   /* Heading vult altijd de volledige containerbreedte */
   useLayoutEffect(() => {
@@ -82,15 +100,15 @@ function Hero() {
   }, [ready])
 
   return (
-    <section className="hero">
+    <section ref={heroRef} className="hero">
       <Loader visible={!ready} onDone={() => setLoaderDone(true)} />
-      <div className="hero__bg">
+      <div ref={bgRef} className="hero__bg">
         <HeroDistortion
           onFramesReady={() => setFramesDone(true)}
           playing={ready}
         />
         <div ref={contentRef} className={`hero__content${ready ? ' hero__content--visible' : ''}`}>
-          <p ref={eyebrowRef} className="hero__eyebrow">Hey I'am</p>
+          <p ref={eyebrowRef} className="hero__eyebrow">Hey, I'm</p>
           <h1 ref={nameRef}   className="hero__name">Rowdy Pelgrim</h1>
           <p ref={roleRef}    className="hero__role">Digital Designer</p>
         </div>

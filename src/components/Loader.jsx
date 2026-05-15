@@ -42,7 +42,7 @@ function YearDisplay({ yearIdx }) {
         ))}
       </div>
       <div className="loader__age" aria-hidden="true">
-        {ages[yearIdx] === 0 ? 'geboren' : `${ages[yearIdx]} jaar`}
+        {ages[yearIdx] === 0 ? 'born' : `${ages[yearIdx]} ${ages[yearIdx] === 1 ? 'year' : 'years'}`}
       </div>
     </div>
   )
@@ -95,7 +95,7 @@ function Loader({ visible, onDone }) {
 
       {/* Screenreader-tekst */}
       <span className="loader__sr-year" aria-live="polite">
-        {years[yearIdx]}, {ages[yearIdx]} jaar
+        {years[yearIdx]}, {ages[yearIdx]} {ages[yearIdx] === 1 ? 'year' : 'years'}
       </span>
     </div>
   )
