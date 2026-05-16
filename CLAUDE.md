@@ -83,9 +83,26 @@ Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200
 
 Iconen zoeken: fonts.google.com/icons
 
+## Gedeelde componenten
+
+### ArrowLink
+Gebruik `<ArrowLink>` voor **alle tekstlinks** door de hele website — nooit een losse `<a>` stylen voor links.
+
+```jsx
+import ArrowLink from './components/ArrowLink'
+
+<ArrowLink href="#cases">Continue reading</ArrowLink>
+```
+
+- Toont een 8px outlined circle links van de tekst, altijd 8px gap
+- Hover: circle groeit naar 40px; pijl vliegt van links naar binnen met opacity en ease (0.2s delay zodat de circle eerst uitgroeit); tekst schuift 4px naar rechts
+- Dark mode: link én tekst zijn volledig wit (`var(--color-white)`)
+- Reveal-animaties (fade-up etc.) op een wrapper-div zetten, niet op de component zelf
+
 ## Regels
 - Schrijf altijd Nederlandse comments
 - Gebruik functionele React componenten
 - Geen externe animatielibraries
 - Gebruik altijd de Figma tokens hierboven, geen hardcoded waardes
 - Gebruik altijd Material Symbols Outlined voor iconen (zie ## Icons)
+- Gebruik altijd `<ArrowLink>` voor tekstlinks, nooit losse `<a>` elementen stylen

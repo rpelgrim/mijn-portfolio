@@ -1,6 +1,7 @@
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Intro from './components/Intro'
+import Cases from './components/Cases'
 import Work from './components/Work'
 import Footer from './components/Footer'
 import CustomCursor from './components/CustomCursor'
@@ -17,6 +18,7 @@ function App() {
         <Navbar />
         <Hero />
         <Intro />
+        <Cases />
         <Work />
       </div>
       <Footer />
